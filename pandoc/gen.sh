@@ -1,7 +1,5 @@
-#! /bin/bash
-
 pandoc \
-    --template algo \
+    --template ./pandoc/algo.latex \
     --filter ./pandoc/minted.py \
     --pdf-engine=xelatex \
     --no-highlight \
@@ -17,7 +15,7 @@ pandoc \
     -V include-before="\renewcommand\labelitemi{$\bullet$}" \
     -V header-includes="\usepackage{minted}" \
     -V geometry="margin=2cm" \
-    *-*.md
+    *.md
 
 latexmk -xelatex -shell-escape template.tex
 latexmk -c
