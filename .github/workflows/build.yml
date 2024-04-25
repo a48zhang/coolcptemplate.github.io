@@ -5,7 +5,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
+      - master
 
 env:
   python_version: "3.9"
@@ -65,3 +65,10 @@ jobs:
           folder: build
           branch: gh-pages
           clean: false
+
+      - name: New Release
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          artifacts: "build/template.pdf"
+          tag: "templates"
+      
