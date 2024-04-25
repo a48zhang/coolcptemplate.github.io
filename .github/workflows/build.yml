@@ -70,5 +70,5 @@ jobs:
         uses: ncipollo/release-action@v1.14.0
         with:
           artifacts: "build/template.pdf"
-          tag: "templates"
+          tag: ${{ github.ref }}
       
