@@ -375,8 +375,8 @@ $if(logo)$
 $endif$
 $endif$
 
-\title{\vspace{50mm} \huge Standard Code Library \\[20pt]}
-\author{CCNUACM \\[10pt] Central China Normal University}
+\title{\vspace{50mm} \huge Code Template \\[20pt]}
+\author{There is no gay @ CCNUACM \\[10pt] Central China Normal University}
 \date{\today}
 
 
