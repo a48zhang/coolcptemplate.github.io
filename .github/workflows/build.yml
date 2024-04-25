@@ -70,5 +70,5 @@ jobs:
         uses: ncipollo/release-action@v1.14.0
         with:
           artifacts: "build/template.pdf"
-          tag: $(echo ${{ github.sha }} | cut -c1-8)
+          tag: ${{ github.run_id }}
       
