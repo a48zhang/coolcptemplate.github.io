@@ -39,7 +39,7 @@ jobs:
         run: |
           mkdir -p /tmp/adodefont
           cd /tmp/adodefont
-          sudo apt install -y texlive texlive-xetex texlive-lang-chinese latexmk wget unzip
+          apt install -y texlive texlive-xetex texlive-lang-chinese latexmk wget unzip
           wget -q -O source-code-pro.zip https://github.com/adobe-fonts/source-code-pro/archive/2.030R-ro/1.050R-it.zip
           wget -q -O source-han-serif.zip https://github.com/adobe-fonts/source-han-serif/archive/1.001R.zip
           wget -q -O source-han-sans.zip https://github.com/adobe-fonts/source-han-sans/archive/2.001R.zip
