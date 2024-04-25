@@ -77,8 +77,8 @@
 
 \date{}
 
-\title{\vspace{50mm} \huge Standard Code Library \\[20pt]}
-\author{CCNUACM \\[10pt] Central China Normal University}
+\title{\vspace{50mm} \huge Code Template \\[20pt]}
+\author{There is no gay @ CCNUACM \\[10pt] Central China Normal University}
 \date{\today}
 
 
@@ -249,6 +249,46 @@ bash judge.sh a a.cpp
   分块一定要特判在同一块中的情况
 \end{itemize}
 
+\hypertarget{sol.cpp}{%
+\subsection{sol.cpp}\label{sol.cpp}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+using VI = vector<ll>;
+using PII = pair<int, int>;
+template <typename T> using fc = function<T>;
+using Graph = vector<vector<int>>;
+#define pb push_back
+#define debug(c) cerr << #c << " = " << c << endl;
+#define rg(x) x.begin(), x.end()
+#define rep(a, b, c) for (auto a = (b); (a) < (c); a++)
+#define repe(a, b, c) for (auto a = (b); (a) <= (c); a++)
+const int MOD = 998244353;
+const int N = 0;
+#ifdef ONLINE_JUDGE
+#define cerr assert(false);
+#endif
+
+void solve()
+{
+    
+}
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int T = 1;
+    cin >> T;
+    while (T--)
+        solve();
+
+    return 0;
+}
+\end{minted}
+
 \hypertarget{ux5b57ux7b26ux4e32}{%
 \section{1-字符串}\label{ux5b57ux7b26ux4e32}}
 
@@ -278,14 +318,7 @@ void kmp(string s, string p)
 \subsection{Manacher}\label{manacher}}
 
 \begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
-int p[N];
-string s0, s = "@#";
-
-int main()
-{
-    cin >> s0;
-    for (auto i : s0)
-        s += i, s += "#";#include <cstdio>
+#include <cstdio>
 using namespace std;
 using ll = long long;
 // !!! N = n * 2, because you need to insert '#' !!!
@@ -332,26 +365,7 @@ int main()
 
     return 0;
 }
-    int m = 0, r = 0;
-    ll ans = 0;
-    int l = s.size();
-    for (int i = 1; i < l; i++)
-    {
-        if (i <= r)
-            p[i] = min(p[m * 2 - i], r - i + 1);
-        else
-            p[i] = 1;
-        while (s[i - p[i]] == s[i + p[i]])
-            ++p[i];
-        if (i + p[i] > r)
-        {
-            r = i + p[i] - 1;
-            m = i;
-        }
-        if (p[i] > ans)
-            ans = p[i];
-    }
-}
+    
 \end{minted}
 
 \hypertarget{hash}{%
@@ -575,6 +589,47 @@ struct AC_automaton
 
 \end{minted}
 
+\hypertarget{exkmp-z-function}{%
+\subsection{exKMP (Z Function)}\label{exkmp-z-function}}
+
+对\texttt{KMP}中\texttt{next}数组的定义稍作改变，就会得到\texttt{exKMP}。
+
+在\texttt{exKMP}中，我们记录\texttt{z{[}i{]}}为：\texttt{s{[}i:{]}} 与
+\texttt{s} 的最长公共前缀。
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+/// @brief Z function, or exKMP.
+/// @param s the string.
+/// @return the Z function array.
+vector<int> Z_function(string &s, VI &z)
+{
+    // indexing from 1
+    int len = s.size();
+    s = "#" + s;
+    // vector<int> z(len + 1);
+    z[1] = 0;
+    int l = 1, r = 1;
+    for (int i = 2; i <= len; i++)
+    {
+        if (i <= r && z[i - l + 1] < r - i + 1)
+            z[i] = z[i - l + 1];
+        else
+        {
+            z[i] = std::max(0, r - i + 1);
+            while (i + z[i] <= len && s[z[i] + 1] == s[i + z[i]])
+                z[i]++;
+        }
+        if (i + z[i] - 1 > r)
+        {
+            l = i;
+            r = i + z[i] - 1;
+        }
+    }
+    z[1] = len;
+    return z;
+}
+\end{minted}
+
 \hypertarget{ux6570ux636eux7ed3ux6784}{%
 \section{2-数据结构}\label{ux6570ux636eux7ed3ux6784}}
 
@@ -717,40 +772,11 @@ class SparseTable
 };
 \end{minted}
 
-\hypertarget{ux7ebfux6bb5ux6811}{%
-\subsection{线段树}\label{ux7ebfux6bb5ux6811}}
+\hypertarget{ux5e26ux61d2ux6807ux8bb0ux7ebfux6bb5ux6811}{%
+\subsection{带懒标记线段树}\label{ux5e26ux61d2ux6807ux8bb0ux7ebfux6bb5ux6811}}
 
 \begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
-#include <bits/stdc++.h>
-
-using namespace std;
-#define IOS ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
-#define int long long
-#define ull unsigned long long
-#define lowbit(i) ((i) & (-i))
-#define ls(p) (p << 1)
-#define rs(p) (p << 1 | 1)
-#define rep(i, a, b) for (int i = a; i <= b; i++)
-#define per(i, a, b) for (int i = a, i >= b, i--)
-
-typedef pair<int, int> PII;
-const int mod = 1e9 + 7;
-const int inf = 0x3f3f3f3f;
-const int N = 1e5 + 200;
-int qpow(int a, int n)
-{
-    int ans = 1;
-    while (n)
-    {
-        if (n & 1)
-        {
-            ans = ans * a % mod;
-        }
-        a = a * a % mod;
-        n >>= 1;
-    }
-    return ans;
-}
+const int N = 1e6;
 int a[N];
 int tag[4 * N];
 int tree[4 * N];
@@ -809,9 +835,9 @@ int query(int x, int y, int l = 1, int r = n, int p = 1)
         res += query(x, y, mid + 1, r, rs(p));
     return res;
 }
-signed main()
+int main()
 {
-    IOS int q;
+    int q;
     cin >> n >> q;
     for (int i = 1; i <= n; i++)
         cin >> a[i];
@@ -832,6 +858,70 @@ signed main()
         }
     }
     return 0;
+}
+\end{minted}
+
+\hypertarget{ux533aux95f4ux6700ux503cux7ebfux6bb5ux6811}{%
+\subsection{区间最值线段树}\label{ux533aux95f4ux6700ux503cux7ebfux6bb5ux6811}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+struct node
+{
+    int maxn;
+} tree[800005];
+int n;
+int tag[800005];
+void push_down(int p, int l, int r)
+{ // 标记下压
+    int mid = (r + l) / 2;
+    tree[2 * p].maxn += tag[p];
+    tree[2 * p + 1].maxn += tag[p];
+    tag[2 * p] += tag[p];
+    tag[2 * p + 1] += tag[p];
+    tag[p] = 0;
+}
+void update(int l, int r, int k, int cl = 1, int cr = n, int p = 1)
+{ // 更新
+    if (cl > r || cr < l)
+    {
+        return;
+    }
+    if (cl >= l && cr <= r)
+    {
+        tree[p].maxn += k;
+        if (cl < cr)
+        {
+            tag[p] += k;
+        }
+    }
+    else
+    {
+        int mid = (cl + cr) >> 1;
+        push_down(p, cl, cr);
+        if (l <= mid)
+            update(l, r, k, cl, mid, 2 * p);
+        if (r > mid)
+            update(l, r, k, mid + 1, cr, 2 * p + 1);
+        tree[p].maxn = max(tree[p << 1].maxn, tree[p * 2 + 1].maxn);
+    }
+}
+int query(int l, int r, int cl = 1, int cr = n, int p = 1)
+{ // 查询
+    if (cl >= l && cr <= r)
+    {
+        return tree[p].maxn;
+    }
+    else
+    {
+        int mid = (cl + cr) >> 1;
+        push_down(p, cl, cr);
+        int tmp = 0;
+        if (l <= mid)
+            tmp = max(tmp, query(l, r, cl, mid, 2 * p));
+        if (r > mid)
+            tmp = max(tmp, query(l, r, mid + 1, cr, 2 * p + 1));
+        return tmp;
+    }
 }
 \end{minted}
 
@@ -1312,28 +1402,6 @@ for(int i=1;i<=n;i++)cout<<dis[i]<<" ";
 }
 \end{minted}
 
-\hypertarget{ux5e76ux67e5ux96c6-1}{%
-\subsection{并查集}\label{ux5e76ux67e5ux96c6-1}}
-
-\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
-int fa[100100];
-void init(int n)
-{
-    for(int i=1;i<=n;i++)fa[i]=i;
-}
-int find(int x)
-{
-    if(fa[x]==x)
-        return x;
-    fa[x]=find(fa[x]);
-    return find(fa[x]);
-}
-void merge(int x,int y)
-{
-    fa[find(x)]=find(y);
-}
-\end{minted}
-
 \hypertarget{ux6700ux5c0fux751fux6210ux6811}{%
 \subsection{最小生成树}\label{ux6700ux5c0fux751fux6210ux6811}}
 
@@ -1341,7 +1409,7 @@ void merge(int x,int y)
 \subsubsection{prim}\label{prim}}
 
 \begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
-   #include <bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 const int N = 5050;
 const int inf=0x3f3f;
