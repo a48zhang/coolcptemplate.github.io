@@ -14,6 +14,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:  pandoc/latex
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -23,16 +24,16 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
 
-      - name: Install Pandoc
-        run: |
-          mkdir -p /tmp/pandoc
-          cd /tmp/pandoc
-          python -m pip --no-cache-dir install setuptools wheel
-          python -m pip --no-cache-dir install pandocfilters Pygments
-          sudo apt install -y texlive texlive-xetex texlive-lang-chinese latexmk wget
-          wget -q "https://github.com/jgm/pandoc/releases/download/${{ env.pandoc_version }}/pandoc-${{ env.pandoc_version }}-1-amd64.deb"
-          sudo dpkg -i pandoc-${{ env.pandoc_version }}-1-amd64.deb
-          rm -rf *.deb
+      # - name: Install Pandoc
+      #   run: |
+      #     mkdir -p /tmp/pandoc
+      #     cd /tmp/pandoc
+      #     python -m pip --no-cache-dir install setuptools wheel
+      #     python -m pip --no-cache-dir install pandocfilters Pygments
+      #     sudo apt install -y texlive texlive-xetex texlive-lang-chinese latexmk wget
+      #     wget -q "https://github.com/jgm/pandoc/releases/download/${{ env.pandoc_version }}/pandoc-${{ env.pandoc_version }}-1-amd64.deb"
+      #     sudo dpkg -i pandoc-${{ env.pandoc_version }}-1-amd64.deb
+      #     rm -rf *.deb
 
       - name: Install Fonts
         run: |
@@ -49,7 +50,7 @@ jobs:
           cp -v source-han-serif/*/SubsetOTF/*/*.otf ~/.fonts/
           cp -v source-han-sans/*/SubsetOTF/*/*.otf ~/.fonts/
           fc-cache -f
-          rm -rf source-code-pro{,.zip} source-han-serif{,.zip} source-han-sans{,.zip}
+#         rm -rf source-code-pro{,.zip} source-han-serif{,.zip} source-han-sans{,.zip}
 
       - name: Generate PDF
         run: |
