@@ -8,8 +8,8 @@ on:
       - master
 
 env:
-  python_version: "3.9"
-  pandoc_version: "3.1.2"
+  python_version: "3.12"
+  pandoc_version: "3.2"
   DEBIAN_FRONTEND: "noninteractive"
 
 jobs:
