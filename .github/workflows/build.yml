@@ -9,7 +9,7 @@ on:
 
 env:
   python_version: "3.12"
-  pandoc_version: "3.2"
+  # pandoc_version: "3.2"
   DEBIAN_FRONTEND: "noninteractive"
 
 jobs:
@@ -30,7 +30,10 @@ jobs:
         uses: BSFishy/pip-action@v1
         with:
           packages: |
+            setuptools 
+            wheel
             pandocfilters
+            Pygments
 
       # - name: Install Pandoc
       #   run: |
