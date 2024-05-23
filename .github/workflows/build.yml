@@ -25,6 +25,13 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
 
+
+      - name: Install Pandoc Filters 
+        uses: BSFishy/pip-action@v1
+        with:
+          packages: |
+            pandocfilters
+
       # - name: Install Pandoc
       #   run: |
       #     mkdir -p /tmp/pandoc
@@ -37,8 +44,7 @@ jobs:
       #     rm -rf *.deb
 
       - name: Install Fonts
-        run: |
-          pip install pandocfilters
+        run: | 
           mkdir -p /tmp/adodefont
           cd /tmp/adodefont
           apt update -y
