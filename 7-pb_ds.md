@@ -48,13 +48,6 @@ class priority_queue
 * binary_heap_tag 二叉堆
 * thin_heap_tag 类似斐波那契堆
 
-|                | pop                             | push                            | modify                        | join        | erase                         |
-| -------------- | ------------------------------- | ------------------------------- | ----------------------------- | ----------- | ----------------------------- |
-| 配对堆         | θ(1)                            | 最坏 θ(size) 均摊 θ(log size)   | 最坏 θ(size) 均摊 θ(log size) | θ(1)        | 最坏 θ(size) 均摊 θ(log size) |
-| 二项堆         | 最坏 θ(log size) 均摊 θ(1)      | O(log size)                     | O(log size)                   | O(log size) | O(log size)                   |
-| 冗余计数二项堆 | θ(1)                            | O(log size)                     | O(log size)                   | O(log size) | O(log size)                   |
-| 二叉堆         | 最坏 θ(size) 均摊 θ(log size)？ | 最坏 θ(size) 均摊 θ(log size)？ | θ(size)                       | θ(size)     | O(size)                       |
-| thin_heap_tag  | θ(1)                            | 最坏 θ(size) 均摊 θ(log size)   | 最坏 θ(size) 均摊 θ(log size) | θ(size)     | 最坏 θ(size) 均摊 θ(log size) |
 
 **支持堆的合并**
 
