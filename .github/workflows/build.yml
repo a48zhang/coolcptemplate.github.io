@@ -68,7 +68,6 @@ jobs:
 
       - name: Generate PDF
         run: |
-          cd ../../
           pwd
           ls
           mkdir -p ~/.pandoc/templates
