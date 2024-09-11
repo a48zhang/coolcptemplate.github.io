@@ -48,8 +48,8 @@ jobs:
 
       - name: Install Fonts
         run: | 
-          mkdir -p /tmp/adodefont
-          cd /tmp/adodefont
+          mkdir -p ./tmp/adodefont
+          cd ./tmp/adodefont
           apt update -y
           apt install -y texlive texlive-xetex texlive-lang-chinese latexmk wget unzip
           tlmgr install minted
@@ -68,6 +68,7 @@ jobs:
 
       - name: Generate PDF
         run: |
+          cd ../../
           mkdir -p ~/.pandoc/templates
           cp pandoc/algo.latex ~/.pandoc/templates/
           bash pandoc/gen.sh
