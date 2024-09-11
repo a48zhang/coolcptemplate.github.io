@@ -70,6 +70,7 @@ jobs:
         run: |
           cd ../../
           pwd
+          ls
           mkdir -p ~/.pandoc/templates
           cp pandoc/algo.latex ~/.pandoc/templates/algo.latex
           bash pandoc/gen.sh
