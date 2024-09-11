@@ -1,0 +1,4307 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+
+% settings
+\usepackage{minted}
+%
+
+
+
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+    \setmainfont[]{Source Han Serif CN}
+    \setsansfont[]{Source Han Sans CN}
+    \setmonofont[Mapping=tex-ansi]{Source Code Pro}
+  \ifxetex
+    \usepackage{xeCJK}
+    \setCJKmainfont[]{Source Han Serif CN}
+  \fi
+  \ifluatex
+    \usepackage[]{luatexja-fontspec}
+    \setmainjfont[]{Source Han Serif CN}
+  \fi
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[margin=2cm]{geometry}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{minted}
+
+
+
+\date{}
+
+\title{\vspace{50mm} \huge Code Template \\[20pt]}
+\author{There is no gay @ CCNUACM \\[10pt] Central China Normal University}
+\date{\today}
+
+
+\begin{document}
+
+\begin{titlepage}
+
+\maketitle
+
+\end{titlepage}
+
+\newpage
+
+\renewcommand\labelitemi{$\bullet$}
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+\newpage
+}
+
+
+
+
+
+
+
+
+\hypertarget{ux6742ux9879}{%
+\section{0-杂项}\label{ux6742ux9879}}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{ux5febux8bfb}{%
+\subsection{快读}\label{ux5febux8bfb}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+inline int read()
+{
+    int x = 0, w = 1;
+    char ch = 0;
+    while (ch < '0' || ch > '9')
+    {
+        ch = getchar();
+        if (ch == '-')
+        {
+            w = -1;
+        }
+    }
+    while (ch >= '0' && ch <= '9')
+    {
+        x = x * 10 + ch - '0';
+        ch = getchar();
+    }
+    return x * w;
+}
+\end{minted}
+
+\hypertarget{judge.sh}{%
+\subsection{\texorpdfstring{\texttt{judge.sh}}{judge.sh}}\label{judge.sh}}
+
+Assume using directory ``./contest''.
+
+\begin{verbatim}
+../contest:
+a.cpp  b.cpp  samples-a  samples-b  judge.sh
+
+../contest/samples-a:
+1.ans  1.in
+
+../contest/samples-b:
+1.ans  1.in  2.ans  2.in
+\end{verbatim}
+
+\texttt{judge.sh}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{bash}
+#!bin/bash
+set -e
+[ $# == 2 ] || { echo invalid args ; exit 1 ; }
+g++ $2.cpp || { echo CE ; exit 1 ; }
+src=./samples-$1
+dir=$1-test
+mkdir -p $dir
+cp $src/* $dir/ 
+cd $dir
+mv ../a.out ./$2
+for input in *.in; do
+  [ $input == "*.in" ] && exit 0
+  cas=${input%.in}
+  output=$cas.out
+  answer=$cas.ans
+  timeout 1 ./$2 < $input > $output 2> $cas.err || { echo Case $cas : TLE or RE ; continue ; }
+  if diff -Za $output $answer > $cas.dif ; then
+    echo Case $cas : AC
+  else
+    echo Case $cas : WA
+    cat $cas.dif $cas.err
+  fi
+done
+\end{minted}
+
+command:
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{bash}
+cd ./contest
+bash judge.sh a a.cpp
+\end{minted}
+
+\hypertarget{ux5fc3ux6001ux5d29ux4e86}{%
+\subsection{心态崩了}\label{ux5fc3ux6001ux5d29ux4e86}}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{(int)v.size()}
+\item
+  \texttt{1LL\ \textless{}\textless{}\ k}
+\item
+  递归函数用全局或者 static 变量要小心
+\item
+  预处理组合数注意上限
+\item
+  想清楚到底是要 \texttt{multiset} 还是 \texttt{set}
+\item
+  提交之前看一下数据范围，测一下边界
+\item
+  数据结构注意数组大小 （2倍，4倍）
+\item
+  字符串注意字符集
+\item
+  如果函数中使用了默认参数的话，注意调用时的参数个数。
+\item
+  注意要读完
+\item
+  构造参数无法使用自己
+\item
+  树链剖分/dfs 序，初始化或者询问不要忘记 idx, ridx
+\item
+  排序时注意结构体的所有属性是不是考虑了
+\item
+  不要把 while 写成 if
+\item
+  不要把 int 开成 char
+\item
+  清零的时候全部用 0\textasciitilde{}n+1。
+\item
+  模意义下不要用除法
+\item
+  哈希不要自然溢出
+\item
+  最短路不要 SPFA，乖乖写 Dijkstra
+\item
+  上取整以及 GCD 小心负数
+\item
+  mid 用 \texttt{l\ +\ (r\ -\ l)\ /\ 2} 可以避免溢出和负数的问题
+\item
+  小心模板自带的意料之外的隐式类型转换
+\item
+  求最优解时不要忘记更新当前最优解
+\item
+  图论问题一定要注意图不连通的问题
+\item
+  处理强制在线的时候 lastans 负数也要记得矫正
+\item
+  不要觉得编译器什么都能优化
+\item
+  分块一定要特判在同一块中的情况
+\end{itemize}
+
+\hypertarget{sol.cpp}{%
+\subsection{sol.cpp}\label{sol.cpp}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+using VI = vector<ll>;
+using PII = pair<int, int>;
+template <typename T> using fc = function<T>;
+using Graph = vector<vector<int>>;
+#define pb push_back
+#define debug(c) cerr << #c << " = " << c << endl;
+#define rg(x) x.begin(), x.end()
+#define rep(a, b, c) for (auto a = (b); (a) < (c); a++)
+#define repe(a, b, c) for (auto a = (b); (a) <= (c); a++)
+#define endl '\n'
+const int MOD = 998244353;
+const int N = 0;
+#ifdef ONLINE_JUDGE
+#define cerr assert(false);
+#endif
+
+void solve()
+{
+    
+}
+
+int main()
+{
+    std::ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int T = 1;
+    cin >> T;
+    while (T--)
+        solve();
+
+    return 0;
+}
+\end{minted}
+
+\hypertarget{hash-for-stl}{%
+\subsection{Hash for STL}\label{hash-for-stl}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+std::size_t operator()(std::vector<uint32_t> const& vec) const {
+  std::size_t seed = vec.size();
+  for(auto& i : vec) {
+    seed ^= i + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+  }
+  return seed;
+}
+\end{minted}
+
+\hypertarget{ux4e09ux5206}{%
+\subsection{三分}\label{ux4e09ux5206}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+double cal()
+{
+    double l = 0, r = 1e10;
+    for (int i = 1; i <= 100; i++)
+    {
+        double m1 = l + (r - l) / 3;
+        double m2 = (r - l) / 3 * 2 + l;
+        if (f(m1) < f(m2))
+            l = m1;
+        else
+            r = m2;
+    } // 求最大值
+    return f(l);
+}
+
+int cal()
+{
+    int l = 0, r = 1e10;
+    while (l + 2 < r)
+    {
+        int m1 = l + (r - l) / 3;
+        int m2 = (r - l) / 3 * 2 + l;
+        if (f(m1) < f(m2))
+        {
+            l = m1;
+        }
+        else
+        {
+            r = m2;
+        }
+    }
+    int ans = f(l);
+    for (int i = l + 1; i <= r; i++)
+    {
+        ans = max(ans, f(i));
+    }
+}
+\end{minted}
+
+\hypertarget{int128-ux8bfbux5199}{%
+\subsection{\texorpdfstring{\texttt{\_\_int128}
+读写}{\_\_int128 读写}}\label{int128-ux8bfbux5199}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+using i128 = __int128;
+i128 read()
+{
+    i128 x = 0, f = 1;
+    char ch = getchar();
+    while (!isdigit(ch) && ch != '-')
+        ch = getchar();
+    if (ch == '-')
+        f = -1, ch = getchar();
+    while (isdigit(ch))
+        x = x * 10 + ch - '0', ch = getchar();
+    return f * x;
+}
+void print(i128 x)
+{
+    if (x < 0)
+        putchar('-'), x = -x;
+    if (x > 9)
+        print(x / 10);
+    putchar(x % 10 + '0');
+}
+
+
+// jiangly的板子
+ostream &operator<<(ostream &os, i128 n)
+{
+    if (n == 0)
+        return os << 0;
+    string s;
+    while (n > 0)
+    {
+        s += char('0' + n % 10);
+        n /= 10;
+    }
+    reverse(s.begin(), s.end());
+    return os << s;
+}
+
+i128 toi128(const string &s)
+{
+    i128 n = 0;
+    for (auto c : s)
+        n = n * 10 + (c - '0');
+    return n;
+}
+
+i128 sqrti128(i128 n)
+{
+    i128 lo = 0, hi = 1E16;
+    while (lo < hi)
+    {
+        i128 x = (lo + hi + 1) / 2;
+        if (x * x <= n)
+            lo = x;
+        else
+            hi = x - 1;
+    }
+    return lo;
+}
+\end{minted}
+
+\hypertarget{ux5b57ux7b26ux4e32}{%
+\section{1-字符串}\label{ux5b57ux7b26ux4e32}}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{kmp}{%
+\subsection{KMP}\label{kmp}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+int f[N];
+void kmp(string s, string p)
+{
+    p += '@';
+    p += s;
+    for (int i = 1; i < p.size(); i++)
+    {
+        int j = f[i - 1];
+        while (j && p[j] != p[i])
+            j = f[j - 1];
+        if (p[j] == p[i])
+            f[i] = j + 1;
+    }
+}
+\end{minted}
+
+\hypertarget{manacher}{%
+\subsection{Manacher}\label{manacher}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <cstdio>
+using namespace std;
+using ll = long long;
+// !!! N = n * 2, because you need to insert '#' !!!
+const int N = 3e7;
+#define min(A, B) ((A > B) ? B : A)
+// p[i]: range of the palindrome i-centered. 
+int p[N];
+// s: the string.
+char s[N] = "@#";
+// l: length of s.
+int l = 2;
+
+int main()
+{
+    char tmp = getchar();
+    while (tmp > 'z' || tmp < 'a')
+        tmp = getchar();
+    while (tmp <= 'z' && tmp >= 'a')
+        s[l++] = tmp, s[l++] = '#', tmp = getchar();
+    /*<--- input & preparation --->*/
+    int m = 0, r = 0;
+    ll ans = 0;
+    for (int i = 1; i < l; i++)
+    {
+        // evaluate p[i]
+        if (i <= r)
+            p[i] = min(p[m * 2 - i], r - i + 1);
+        else
+            p[i] = 1;
+        // brute force!
+        while (s[i - p[i]] == s[i + p[i]])
+            ++p[i];
+        // maintain m, r
+        if (i + p[i] > r)
+        {
+            r = i + p[i] - 1;
+            m = i;
+        }
+        // find the longest p[i]
+        if (p[i] > ans)
+            ans = p[i]; 
+    }
+    printf("%lld", ans - 1);
+
+    return 0;
+}
+    
+\end{minted}
+
+\hypertarget{hash}{%
+\subsection{hash}\label{hash}}
+
+\hypertarget{ux968fux673aux7d20ux6570ux8868}{%
+\subsubsection{随机素数表}\label{ux968fux673aux7d20ux6570ux8868}}
+
+42737, 46411, 50101, 52627, 54577, 191677, 194869, 210407, 221831,
+241337, 578603, 625409, 713569, 788813, 862481, 2174729, 2326673,
+2688877, 2779417, 3133583, 4489747, 6697841, 6791471, 6878533, 7883129,
+9124553, 10415371, 11134633, 12214801, 15589333, 17148757, 17997457,
+20278487, 27256133, 28678757, 38206199, 41337119, 47422547, 48543479,
+52834961, 76993291, 85852231, 95217823, 108755593, 132972461, 171863609,
+173629837, 176939899, 207808351, 227218703, 306112619, 311809637,
+322711981, 330806107, 345593317, 345887293, 362838523, 373523729,
+394207349, 409580177, 437359931, 483577261, 490845269, 512059357,
+534387017, 698987533, 764016151, 906097321, 914067307, 954169327
+
+1572869, 3145739, 6291469, 12582917, 25165843, 50331653
+（适合哈希的素数）
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <string>
+using ull = unsigned long long;
+using std::string;
+const int mod = 998244353;
+
+int n;
+ull Hash[2000200]; // 自然溢出法用unsigned类型
+ull RHash[2000200];
+ull base[2000200];
+void init()
+{
+    base[0] = 1;
+    for (int i = 1; i <= 2000010; i++)
+    {
+        base[i] = base[i - 1] * 131 % mod;
+    }
+}
+void get_hash(string s)
+{
+    for (int i = 1; i <= (int)s.size(); i++)
+    {
+        Hash[i] = Hash[i - 1] * base[1] % mod + s[i - 1];
+        Hash[i] %= mod;
+    }
+}
+void get_Rhash(string s)
+{
+    for (int i = (int)s.size(); i >= 1; i--)
+    {
+        RHash[s.size() - i + 1] = RHash[s.size() - i] * base[1] % mod + s[i - 1];
+        RHash[i] %= mod;
+    }
+}
+ull getR(int l, int r)
+{
+    if (l > r)
+        return 0;
+    return (RHash[r] - (RHash[l - 1] * base[r - l + 1]) % mod + mod) % mod;
+}
+ull get(int l, int r)
+{
+    if (l > r)
+        return 0;
+    return (Hash[r] - (Hash[l - 1] * base[r - l + 1]) % mod + mod) % mod;
+}
+\end{minted}
+
+\hypertarget{our-hash}{%
+\subsubsection{Our Hash}\label{our-hash}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+    const int N = 1050000;
+    array<int,2> mod = {1572869,6291469};
+    array<int,2> bas = {131,137};
+    array<int,2> base[N];
+    string a;
+    int lena;
+    array<int,2> hasha[N];
+void init(){
+    ll tmp1;
+    base[0] = {1,1};
+    for(int i=1;i<=N*2-2;i++){
+        for(int j=0;j<2;j++){
+            tmp1 =  1ll*base[i-1][j]*bas[j];tmp1%=mod[j];
+            base[i][j] = tmp1%mod[j];
+        }
+    }
+}
+void geta(){
+    hasha[0] = {0,0};
+    ll tmp1;
+    for(int i=1;i<=2*lena;i++){
+        for(int j=0;j<2;j++){
+            tmp1 = 1ll*hasha[i-1][j]*base[1][j];
+            tmp1%=mod[j];
+            hasha[i][j] = tmp1+a[i] - 'A';
+            hasha[i][j]%=mod[j];
+        }
+    }
+}
+array<int,2> cala(int l){
+    array<int,2> res={0,0};
+    int r = l+lena-1;
+    ll tmp1;
+    for(int i=0;i<2;i++){
+        tmp1 = 1ll*hasha[l-1][i]*base[r-l+1][i];tmp1%=mod[i];
+        res[i] = (hasha[r][i]-(tmp1)%mod[i]+mod[i])%mod[i];
+        res[i]%=mod[i];
+    }
+    return res;
+}
+\end{minted}
+
+\hypertarget{ux4eceux4e00ux961fux5077ux7684hash}{%
+\subsubsection{从一队偷的Hash}\label{ux4eceux4e00ux961fux5077ux7684hash}}
+
+提示：调用时要从1开始数数。传入的字符串不用做特殊处理。
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
+
+bool isprime(int n)
+{
+    if (n <= 1)
+        return false;
+    for (int i = 2; i * i <= n; i++)
+        if (n % i == 0)
+            return false;
+    return true;
+}
+int findPrime(int n)
+{
+    while (!isprime(n))
+        n++;
+    return n;
+}
+
+template <int N> struct StringHash
+{
+    static array<int, N> mod;
+    static array<int, N> base;
+    vector<array<int, N>> p, h;
+    StringHash() = default;
+    StringHash(const string &s)
+    {
+        int n = s.size();
+        p.resize(n);
+        h.resize(n);
+        fill(p[0].begin(), p[0].end(), 1);
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < N; j++)
+            {
+                p[i][j] = 1ll * (i == 0 ? 1ll : p[i - 1][j]) * base[j] % mod[j];
+                h[i][j] = (1ll * (i == 0 ? 0ll : h[i - 1][j]) * base[j] + s[i]) % mod[j];
+            }
+    }
+    array<int, N> query(int l, int r)
+    {
+        assert(r >= l - 1);
+        array<int, N> ans{};
+        if (l > r)
+            return {0, 0};
+        for (int i = 0; i < N; i++)
+        {
+            ans[i] = ((h[r][i] - 1ll * (l == 0 ? 0ll : h[l - 1][i]) * (r - l + 1 == 0 ? 1ll : p[r - l][i])) % mod[i] +
+                      mod[i]) %
+                     mod[i];
+        }
+        return ans;
+    }
+};
+
+constexpr int HN = 2;
+template <>
+array<int, 2> StringHash<HN>::mod = {findPrime(rng() % 900000000 + 100000000),
+                                     findPrime(rng() % 900000000 + 100000000)};
+template <> array<int, 2> StringHash<HN>::base{13331, 131};
+using Hashing = StringHash<HN>;
+\end{minted}
+
+\hypertarget{ux5b57ux5178ux6811}{%
+\subsection{字典树}\label{ux5b57ux5178ux6811}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <string>
+using std::string;
+/* Last modified: 23/07/03 */
+// Trie for string and prefix
+class Trie
+{
+
+    static const int trie_tot_size = 1e5;
+    // trie_node_size: modify if get() is modified.
+    static const int trie_node_size = 64;
+    int tot = 0;
+    // end: reserved for count
+    const int end = 63;
+    int (*nxt)[trie_node_size];
+
+  public:
+    Trie()
+    {
+        nxt = new (int[trie_tot_size][trie_node_size]);
+    }
+    int get(char x)
+    {
+        // modify if x is in certain range, assuming 0-9 or a-z.
+        if (x >= 'A' && x <= 'Z')
+            return x - 'A';
+        else if (x >= 'a' && x <= 'z')
+            return x - 'a' + 26;
+        else
+            return x - '0' + 52;
+    }
+    int find(string s)
+    {
+        int cnt = 0;
+        for (auto i : s)
+        {
+            cnt = nxt[cnt][get(i)];
+            if (!cnt)
+                return 0;
+        }
+        return cnt;
+    }
+    void insert(string s)
+    {
+        int cnt = 0;
+        for (auto i : s)
+        {
+            auto j = get(i);
+            // count how many strings went by
+            nxt[cnt][end]++;
+            if (nxt[cnt][j] > 0)
+                // character i already exists.
+                cnt = nxt[cnt][j];
+            else
+            {
+                // doesn't exist, new node.
+                nxt[cnt][j] = ++tot;
+                cnt = tot;
+            }
+        }
+        nxt[cnt][end]++;
+    }
+    int count(string s)
+    {
+        int cnt = find(s);
+        if (!cnt)
+            return 0;
+        return nxt[cnt][end];
+    }
+    void clear()
+    {
+        for (int i = 0; i <= tot; i++)
+            for (int j = 0; j <= end; j++)
+                nxt[i][j] = 0;
+        tot = 0;
+    }
+};
+\end{minted}
+
+\hypertarget{acux81eaux52a8ux673a}{%
+\subsection{AC自动机}\label{acux81eaux52a8ux673a}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <queue>
+#include <string.h>
+#include <string>
+using std::string, std::queue;
+
+struct AC_automaton
+{
+    static const int _N = 1e6;
+
+    int (*trie)[27];
+    int tot = 0;
+    int *fail;
+    int *e;
+    AC_automaton()
+    {
+        trie = new int[_N][27];
+        fail = new int[_N];
+        e = new int[_N];
+        memset(trie, 0, sizeof(trie));
+        memset(fail, 0, sizeof(fail));
+        memset(e, 0, sizeof(e));
+    }
+
+    void insert(string s)
+    {
+        int now = 0;
+        for (auto i : s)
+            if (trie[now][i - 'a'])
+                now = trie[now][i - 'a'];
+            else
+                trie[now][i - 'a'] = ++tot, now = tot;
+        e[now]++;
+    }
+
+    void build()
+    {
+        queue<int> q;
+        for (int i = 0; i < 26; i++)
+            if (trie[0][i])
+                q.push(trie[0][i]);
+        while (q.size())
+        {
+            int u = q.front();
+            q.pop();
+            for (int i = 0; i < 26; i++)
+                if (trie[u][i])
+                    fail[trie[u][i]] = trie[fail[u]][i], q.push(trie[u][i]);
+                else
+                    trie[u][i] = trie[fail[u]][i];
+        }
+    }
+
+    int query(string t)
+    {
+        int u = 0, res = 0;
+        for (auto c : t)
+        {
+            u = trie[u][c - 'a'];
+            for (int j = u; j && e[j] != -1; j = fail[j])
+                res += e[j], e[j] = -1;
+        }
+        return res;
+    }
+};
+
+\end{minted}
+
+\hypertarget{exkmp-z-function}{%
+\subsection{exKMP (Z Function)}\label{exkmp-z-function}}
+
+对\texttt{KMP}中\texttt{next}数组的定义稍作改变，就会得到\texttt{exKMP}。
+
+在\texttt{exKMP}中，我们记录\texttt{z{[}i{]}}为：\texttt{s{[}i:{]}} 与
+\texttt{s} 的最长公共前缀。
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+/// @brief Z function, or exKMP.
+/// @param s the string.
+/// @return the Z function array.
+vector<int> Z_function(string &s, VI &z)
+{
+    // indexing from 1
+    int len = s.size();
+    s = "#" + s;
+    // vector<int> z(len + 1);
+    z[1] = 0;
+    int l = 1, r = 1;
+    for (int i = 2; i <= len; i++)
+    {
+        if (i <= r && z[i - l + 1] < r - i + 1)
+            z[i] = z[i - l + 1];
+        else
+        {
+            z[i] = std::max(0, r - i + 1);
+            while (i + z[i] <= len && s[z[i] + 1] == s[i + z[i]])
+                z[i]++;
+        }
+        if (i + z[i] - 1 > r)
+        {
+            l = i;
+            r = i + z[i] - 1;
+        }
+    }
+    z[1] = len;
+    return z;
+}
+\end{minted}
+
+\hypertarget{ux6570ux636eux7ed3ux6784}{%
+\section{2-数据结构}\label{ux6570ux636eux7ed3ux6784}}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{ux6811ux72b6ux6570ux7ec4}{%
+\subsection{树状数组}\label{ux6811ux72b6ux6570ux7ec4}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+class BIT
+{
+    int n = 2e6;
+    long long *a;
+
+  public:
+    BIT(int size) : n(size)
+    {
+        a = new long long[size + 10];
+    }
+    void update(int p, long long x)
+    {
+        while (p <= n)
+            a[p] += x, p += (p & (-p));
+    }
+
+    long long query(int l, int r)
+    {
+        long long ret = 0;
+        l--;
+        while (r > 0)
+            ret += a[r], r -= (r & (-r));
+        while (l > 0)
+            ret -= a[l], l -= (l & (-l));
+        return ret;
+    }
+};
+
+\end{minted}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+template<typename T>
+struct Fenwick{
+    int n;
+    vector<T> tr;
+ 
+    Fenwick(int n) : n(n), tr(n + 1, 0){}
+ 
+    int lowbit(int x){
+        return x & -x;
+    }
+ 
+    void modify(int x, T c){//单点添加
+        for(int i = x; i <= n; i += lowbit(i)) tr[i] += c;
+    }
+ 
+    void modify(int l, int r, T c){//区间添加
+        modify(l, c);
+        if (r + 1 <= n) modify(r + 1, -c);
+    }
+ 
+    T query(int x){
+        T res = T();
+        for(int i = x; i; i -= lowbit(i)) res += tr[i];
+        return res;
+    }
+ 
+    T query(int l, int r){
+        return query(r) - query(l - 1);
+    }
+ 
+    int find_first(T sum){//和出现的第一位置
+        int ans = 0; T val = 0;
+        for(int i = __lg(n); i >= 0; i--){
+            if ((ans | (1 << i)) <= n && val + tr[ans | (1 << i)] < sum){
+                ans |= 1 << i;
+                val += tr[ans];
+            }
+        }
+        return ans + 1;
+    }
+ 
+    int find_last(T sum){
+        int ans = 0; T val = 0;
+        for(int i = __lg(n); i >= 0; i--){
+            if ((ans | (1 << i)) <= n && val + tr[ans | (1 << i)] <= sum){
+                ans |= 1 << i;
+                val += tr[ans];
+            }
+        }
+        return ans;
+    }
+ 
+};
+using BIT = Fenwick<int>; 
+\end{minted}
+
+\hypertarget{ux5e76ux67e5ux96c6}{%
+\subsection{并查集}\label{ux5e76ux67e5ux96c6}}
+
+\hypertarget{ux5e26ux6709ux8defux5f84ux538bux7f29ux7684ux5e76ux67e5ux96c6}{%
+\subsubsection{带有路径压缩的并查集}\label{ux5e26ux6709ux8defux5f84ux538bux7f29ux7684ux5e76ux67e5ux96c6}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+struct DSU
+{
+    vector<int> f;
+
+    DSU() {}
+    DSU(int n)
+    {
+        clear(n);
+    }
+
+    // 多测时只构造一次 清空T次
+    void clear(int n)
+    {
+        f.resize(n);
+        iota(f.begin(), f.end(), 0);
+    }
+
+    int find(int x)
+    {
+        return f[x] == x ? x : (f[x] = find(f[x]));
+    }
+
+    bool same(int x, int y)
+    {
+        return find(x) == find(y);
+    }
+
+    bool merge(int x, int y)
+    {
+        x = find(x);
+        y = find(y);
+        return (x == y) ? false : f[y] = x;
+    }
+};
+\end{minted}
+
+\hypertarget{ux5e26ux6743ux5e76ux67e5ux96c6}{%
+\subsubsection{带权并查集}\label{ux5e26ux6743ux5e76ux67e5ux96c6}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+struct DSU
+{
+    vector<int> f, siz;
+
+    DSU() {}
+    DSU(int n)
+    {
+        clear(n);
+    }
+
+    void clear(int n)
+    {
+        f.resize(n);
+        iota(f.begin(), f.end(), 0);
+        siz.assign(n, 1);
+    }
+
+    int find(int x)
+    {
+        return f[x] == x ? x : (f[x] = find(f[x]));
+    }
+
+    bool same(int x, int y)
+    {
+        return find(x) == find(y);
+    }
+
+    bool merge(int x, int y)
+    {
+        x = find(x);
+        y = find(y);
+        if (x == y)
+            return false;
+        // if (siz[x] < siz[y])
+        //     swap(x, y);
+        siz[x] += siz[y];
+        f[y] = x;
+        return true;
+    }
+
+    int size(int x)
+    {
+        return siz[find(x)];
+    }
+};
+\end{minted}
+
+\hypertarget{stux8868}{%
+\subsection{ST表}\label{stux8868}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+// log2(x) 的预处理
+// 1. 递推
+lg[2] = 1;
+for (int i = 3; i < N; i++)
+    lg[i] = lg[i / 2] + 1;
+// 2. 基于编译期计算
+using std::array;
+// WARNING: LOG_SIZE may cause CE if too big.
+const int LOG_SIZE = 1e5 + 10;
+constexpr array<int, LOG_SIZE> LOG = []() {
+    array<int, LOG_SIZE> l{0, 0, 1};
+    for (int i = 3; i < LOG_SIZE; i++)
+        l[i] = l[i / 2] + 1;
+    return l;
+}();
+// 3. 直接计算
+int lg(int x)
+{
+    return 31 - __builtin_clz(x);
+}
+// STL 提供了 std::lg(), 底数是e.
+\end{minted}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+class SparseTable
+{
+  private:
+    // SIZE depends on range of f[i][0].
+    // 22 is suitable for 1e5.
+    static const int SIZE = 22;
+    // f[i][j] maintains the result from i to i + 2 ^ j - 1;
+    int (*f)[SIZE];
+    using func = std::function<int(int, int)>;
+    func op;
+    // length of f from 1 to l;
+    int l;
+
+  public:
+    SparseTable(int a[][SIZE], func foo, int len) : f(a), op(foo), l(len)
+    {
+        for (int j = 1; j < SIZE; j++)
+            for (int i = 1; i + (1 << j) - 1 <= len; i++)
+                // f[i][j] comes from f[i][j - 1].
+                // f[i][j - 1], f[i + 2^(j - 1)] cover the range of f[i][j].
+                f[i][j] = foo(f[i][j - 1], f[i + (1 << (j - 1))][j - 1]);
+    };
+    int query(int x, int y)
+    {
+        int s = LOG[y - x + 1];
+        return op(f[x][s], f[y - (1 << s) + 1][s]);
+    }
+};
+\end{minted}
+
+\hypertarget{ux5e26ux61d2ux6807ux8bb0ux7ebfux6bb5ux6811}{%
+\subsection{带懒标记线段树}\label{ux5e26ux61d2ux6807ux8bb0ux7ebfux6bb5ux6811}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+const int N = 1e6;
+int a[N];
+int tag[4 * N];
+int tree[4 * N];
+int n;
+void push_up(int p)
+{
+    tree[p] = tree[ls(p)] + tree[rs(p)];
+}
+void build(int p, int l, int r)
+{
+    if (l == r)
+    {
+        tree[p] = a[l];
+        return;
+    }
+    int mid = (l + r) >> 1;
+    build(ls(p), l, mid);
+    build(rs(p), mid + 1, r);
+    push_up(p);
+}
+void push_down(int p, int l, int r)
+{
+    int mid = (l + r) >> 1;
+    tag[ls(p)] += tag[p];
+    tag[rs(p)] += tag[p];
+    tree[ls(p)] += tag[p] * (mid - l + 1);
+    tree[rs(p)] += tag[p] * (r - mid);
+    tag[p] = 0;
+}
+void update(int nl, int nr, int k, int p = 1, int l = 1, int r = n)
+{
+    if (nl <= l && r <= nr)
+    {
+        tag[p] += k;
+        tree[p] += k * (r - l + 1);
+        return;
+    }
+    push_down(p, l, r);
+    int mid = (l + r) >> 1;
+    if (nl <= mid)
+        update(nl, nr, k, ls(p), l, mid);
+    if (nr > mid)
+        update(nl, nr, k, rs(p), mid + 1, r);
+    push_up(p);
+}
+int query(int x, int y, int l = 1, int r = n, int p = 1)
+{
+    int res = 0;
+    if (x <= l && y >= r)
+        return tree[p];
+    int mid = (l + r) >> 1;
+    push_down(p, l, r);
+    if (x <= mid)
+        res += query(x, y, l, mid, ls(p));
+    if (y > mid)
+        res += query(x, y, mid + 1, r, rs(p));
+    return res;
+}
+int main()
+{
+    int q;
+    cin >> n >> q;
+    for (int i = 1; i <= n; i++)
+        cin >> a[i];
+    build(1, 1, n);
+    while (q--)
+    {
+        int op, x, y, k;
+        cin >> op;
+        if (op == 1)
+        {
+            cin >> x >> y >> k;
+            update(x, y, k);
+        }
+        else
+        {
+            cin >> x >> y;
+            cout << query(x, y) << endl;
+        }
+    }
+    return 0;
+}
+\end{minted}
+
+\hypertarget{ux7ebfux6bb5ux6811ux4e0aux4e8cux5206}{%
+\subsection{线段树上二分}\label{ux7ebfux6bb5ux6811ux4e0aux4e8cux5206}}
+
+eg. 两种操作，1. 修改ai为d 2.
+查询l,r中第一次出现大于等于d位置，否则返回-1
+
+维护区间最大值，
+
+对一个区间判断最大值是否大于等于d
+
+存在则先找左区间，再找右区间
+
+\hypertarget{ux533aux95f4ux6700ux503cux7ebfux6bb5ux6811}{%
+\subsection{区间最值线段树}\label{ux533aux95f4ux6700ux503cux7ebfux6bb5ux6811}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+struct node
+{
+    int maxn;
+} tree[800005];
+int n;
+int tag[800005];
+void push_down(int p, int l, int r)
+{ // 标记下压
+    int mid = (r + l) / 2;
+    tree[2 * p].maxn += tag[p];
+    tree[2 * p + 1].maxn += tag[p];
+    tag[2 * p] += tag[p];
+    tag[2 * p + 1] += tag[p];
+    tag[p] = 0;
+}
+void update(int l, int r, int k, int cl = 1, int cr = n, int p = 1)
+{ // 更新
+    if (cl > r || cr < l)
+    {
+        return;
+    }
+    if (cl >= l && cr <= r)
+    {
+        tree[p].maxn += k;
+        if (cl < cr)
+        {
+            tag[p] += k;
+        }
+    }
+    else
+    {
+        int mid = (cl + cr) >> 1;
+        push_down(p, cl, cr);
+        if (l <= mid)
+            update(l, r, k, cl, mid, 2 * p);
+        if (r > mid)
+            update(l, r, k, mid + 1, cr, 2 * p + 1);
+        tree[p].maxn = max(tree[p << 1].maxn, tree[p * 2 + 1].maxn);
+    }
+}
+int query(int l, int r, int cl = 1, int cr = n, int p = 1)
+{ // 查询
+    if (cl >= l && cr <= r)
+    {
+        return tree[p].maxn;
+    }
+    else
+    {
+        int mid = (cl + cr) >> 1;
+        push_down(p, cl, cr);
+        int tmp = 0;
+        if (l <= mid)
+            tmp = max(tmp, query(l, r, cl, mid, 2 * p));
+        if (r > mid)
+            tmp = max(tmp, query(l, r, mid + 1, cr, 2 * p + 1));
+        return tmp;
+    }
+}
+\end{minted}
+
+\hypertarget{ux5355ux8c03ux6808}{%
+\subsection{单调栈}\label{ux5355ux8c03ux6808}}
+
+满足栈中元素单调递增或递减的栈
+
+可用于o(n)寻找每个数之后第一个大于他的数的位置（用单调递减栈）
+
+可解决求
+\(max_{1\leq l\leq n,l\leq r \leq n}((r-l+1)*min_{l\leq i \leq r}a[i])\)
+
+即区间长度乘区间最值结果的最值
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+int n,m;//洛谷P5788
+stack<int>st;
+int a[3000005],ans[3000005];
+void solve(){
+    cin>>n;
+    for(int i=1;i<=n;i++) cin>>a[i];
+    for(int i=1;i<=n;i++){
+        while(st.size()&&a[i]>a[st.top()]){//维护递减栈
+            ans[st.top()] = i;//更新答案
+            st.pop();
+        }
+        st.push(i);
+    }
+    for(int i=1;i<=n;i++) cout<<ans[i]<<" ";
+    cout<<endl;
+}
+\end{minted}
+
+\hypertarget{ux5355ux8c03ux961fux5217}{%
+\subsection{单调队列}\label{ux5355ux8c03ux961fux5217}}
+
+p{[}head{]}表示序号 p{[}head{]}!=head
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+int p[N];
+int head=1,tail=0;
+for(int i=1;i<=n;i++){
+    if(head<=tail&&p[head]==i-k){//当前0          区间长度大于k时扔掉头部
+        head++;
+    }
+    while(head<=tail&&a[p[tail]]<=a[i]) tail--;//此时求最大值
+    p[++tail]=i;
+    //则head记录区间内最值
+}
+\end{minted}
+
+\hypertarget{ux53efux6301ux4e45ux5316ux7ebfux6bb5ux6811}{%
+\subsection{可持久化线段树}\label{ux53efux6301ux4e45ux5316ux7ebfux6bb5ux6811}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+struct node
+{
+    int l, r;
+    ll v;
+} tr[N];
+ll a[N];
+int tot;
+
+int clone(int x)
+{
+    tr[++tot] = tr[x];
+    return tot;
+}
+
+int push_up(int p)
+{
+    tr[p].v = tr[tr[p].l].v + tr[tr[p].r].v;
+    return p;
+}
+
+int build(int l, int r)
+{
+    int x = ++tot;
+    if (l == r)
+    {
+        tr[x].v = a[l];
+        return x;
+    }
+    int mid = (l + r) / 2;
+    tr[x].l = build(l, mid);
+    tr[x].r = build(mid + 1, r);
+
+    return push_up(x);
+}
+
+int update(int pos, int l, int r, int x, int p)
+{
+    int np = clone(p);
+    if (l == r)
+    {
+        tr[np].v = x;
+        return np;
+    }
+    int mid = (l + r) / 2;
+    if (pos <= mid)
+        tr[np].l = update(pos, l, mid, x, tr[np].l);
+    else
+        tr[np].r = update(pos, mid + 1, r, x, tr[np].r);
+    return push_up(np);
+}
+
+ll query(int l, int r, int x, int y, int p)
+{
+    if (l >= x && r <= y)
+        return tr[p].v;
+    int mid = (l + r) / 2;
+    if (y <= mid)
+        return query(l, mid, x, y, tr[p].l);
+    else if (x > mid)
+        return query(mid + 1, r, x, y, tr[p].r);
+    return query(l, mid, x, mid, tr[p].l) + query(mid + 1, r, mid + 1, y, tr[p].r);
+}
+\end{minted}
+
+\hypertarget{ux53efux6301ux4e45ux5316ux7ebfux6bb5ux6811-ux533aux95f4ux7b2ckux5927}{%
+\subsection{可持久化线段树-区间第k大}\label{ux53efux6301ux4e45ux5316ux7ebfux6bb5ux6811-ux533aux95f4ux7b2ckux5927}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+struct pree_kth
+{
+    int tot = 0;
+    int size;
+    vector<node> tr;
+    vector<int> his;
+    map<int, int> to, back;
+    int clone(int x)
+    {
+        tr[++tot] = tr[x];
+        return tot;
+    }
+
+    int push_up(int p)
+    {
+        tr[p].v = tr[tr[p].l].v + tr[tr[p].r].v;
+        return p;
+    }
+
+    pree_kth(vector<int> &a, int n) : his(n + 1), tr(n << 5), size(n)
+    {
+        map<int, int> mp;
+        int cnt = 0;
+        for (int i = 1; i <= n; i++)
+            mp[a[i]]++;
+        for (auto [k, v] : mp)
+            to[k] = ++cnt, back[cnt] = k;
+        his[0] = build(1, n);
+        for (int i = 1; i <= n; i++)
+            his[i] = update(to[a[i]], 1, n, his[i - 1]);
+    }
+
+    int build(int l, int r)
+    {
+        int x = ++tot;
+        if (l == r)
+        {
+            tr[x].v = 0;
+            return x;
+        }
+        int mid = (l + r) / 2;
+        tr[x].l = build(l, mid);
+        tr[x].r = build(mid + 1, r);
+
+        return push_up(x);
+    }
+
+    int update(int pos, int l, int r, int p)
+    {
+        int np = clone(p);
+        if (l == r)
+        {
+            tr[np].v++;
+            return np;
+        }
+        int mid = (l + r) / 2;
+        if (pos <= mid)
+            tr[np].l = update(pos, l, mid, tr[np].l);
+        else
+            tr[np].r = update(pos, mid + 1, r, tr[np].r);
+        return push_up(np);
+    }
+
+    int _get(int u, int v, int l, int r, int k)
+    {
+        if (l == r)
+            return l;
+        int x = tr[tr[v].l].v - tr[tr[u].l].v;
+        int mid = (l + r) / 2;
+        if (x >= k)
+            return _get(tr[u].l, tr[v].l, l, mid, k);
+        else
+            return _get(tr[u].r, tr[v].r, mid + 1, r, k - x);
+    }
+
+    int kth(int l, int r, int k)
+    {
+        return back[_get(his[l - 1], his[r], 1, size, k)];
+    }
+};
+
+\end{minted}
+
+\hypertarget{ux52a8ux6001ux89c4ux5212}{%
+\section{3-动态规划}\label{ux52a8ux6001ux89c4ux5212}}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{ux80ccux5305dp}{%
+\subsection{背包DP}\label{ux80ccux5305dp}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+// 多重背包
+for (int i = 1; i <= n; i++)
+{
+    int q = a[i].m;
+    for (int j = 1; q; j *= 2)
+    {
+        if (j > q)
+        {
+            j = q;
+        }
+        q -= j;
+        for (int k = w; k >= j * a[i].w; k--)
+        {
+            f[k] = max(f[k], f[k - j * a[i].w] + j * a[i].v);
+        }
+    }
+}
+\end{minted}
+
+\hypertarget{ux4e8cux8fdbux5236ux5206ux7ec4ux4f18ux5316}{%
+\subsubsection{二进制分组优化}\label{ux4e8cux8fdbux5236ux5206ux7ec4ux4f18ux5316}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+index = 0;
+for (int i = 1; i <= m; i++)
+{
+    int c = 1, p, h, k;
+    cin >> p >> h >> k;
+    while (k > c)
+    {
+        k -= c;
+        list[++index].w = c * p;
+        list[index].v = c * h;
+        c *= 2;
+    }
+    list[++index].w = p * k;
+    list[index].v = h * k;
+}
+\end{minted}
+
+\hypertarget{ux72b6ux6001ux538bux7f29dp}{%
+\subsection{状态压缩DP}\label{ux72b6ux6001ux538bux7f29dp}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+int cnt[1024];
+int dp[40][1024][90];
+int can[2000], num = 0;
+int S = 1 << n;
+for (int s = 0; s < S; s++)
+{
+    if ((s << 1) & s)
+    {
+        continue;
+    }
+    can[++num] = s;
+    for (int j = 0; j < n; j++)
+    {
+        if ((s >> j) & 1)
+        {
+            cnt[num]++;
+        }
+    }
+    dp[1][num][cnt[num]] = 1;
+}
+for (int i = 2; i <= n; i++)
+{
+    for (int j = 1; j <= num; j++)
+    {
+        int x = can[j];
+        for (int p = 1; p <= num; p++)
+        {
+            int y = can[p];
+            if ((y & x) || ((y << 1) & x) || ((y >> 1) & x))
+                continue;
+            for (int l = 0; l <= k; l++)
+            {
+                dp[i][j][cnt[j] + l] += dp[i - 1][p][l];
+            }
+        }
+    }
+}
+\end{minted}
+
+枚举s的二进制真子集
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+for(int j=s;j;j=(j-1)&s){
+    //...
+}
+\end{minted}
+
+\hypertarget{ux6570ux4f4ddp}{%
+\subsection{数位DP}\label{ux6570ux4f4ddp}}
+
+现在问有多少的数比12345小
+
+1.关于前导0：00999→999，09999→9999
+
+2.关于limit前面的数是否紧贴上限
+
+如果前面的数是紧贴上限的，当前这位枚举的上限便是当前数的上限
+
+如果前面的数不是紧贴上限的，当前这位枚举的上限便是 9
+
+3.关于DP维度
+
+一般来说，DFS有几个状态，DP就几个维度　　
+
+比如现在DP就是DP {[}pos{]} {[}limt{]} {[}zero{]}
+
+4.关于记忆化DP
+
+现在枚举到了 10××× 和 11×××
+
+显然 这两种状态后面的×××状态数是一样的
+
+重点：dp{[}pos{]}{[}limit{]}{[}zero{]}表示前面的数枚举状态确定，后面的数有多少种可能
+
+5.关于DP细节
+
+一般来说我们一开始都memset(dp,-1,sizeof(dp))
+
+如果dp{[}pos{]}{[}limt{]}{[}zero{]}!=-1 return
+dp{[}pos{]}{[}limit{]}{[}zero{]};
+
+6.关于初始化：
+
+一开始 limit 是1，表示一开始的数只能选 1\textasciitilde{}a{[}1{]}
+
+一开始zero 是1，假定表示前面的数全为0
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define mp make_pair
+#define pb push_back  // vector函数
+#define popb pop_back // vector函数
+#define fi first
+#define se second
+const int N = 20;
+// const int M=;
+// const int inf=0x3f3f3f3f;     //一般为int赋最大值,不用于memset中
+// const ll INF=0x3ffffffffffff; //一般为ll赋最大值,不用于memset中
+int T, n, len, a[N], dp[N][2][2];
+inline int read()
+{
+    int x = 0, f = 1;
+    char ch = getchar();
+    while (ch < '0' || ch > '9')
+    {
+        if (ch == '-')
+            f = -1;
+        ch = getchar();
+    }
+    while (ch >= '0' && ch <= '9')
+    {
+        x = (x << 1) + (x << 3) + (ch ^ 48);
+        ch = getchar();
+    }
+    return x * f;
+}
+int dfs(int pos, bool lim, bool zero)
+{
+    if (pos > len)
+        return 1;
+    if (dp[pos][lim][zero] != -1)
+        return dp[pos][lim][zero];
+    int res = 0, num = lim ? a[pos] : 9;
+    for (int i = 0; i <= num; i++)
+        res += dfs(pos + 1, lim && i == num, zero && i == 0);
+    return dp[pos][lim][zero] = res;
+}
+int solve(int x)
+{
+    len = 0;
+    memset(dp, -1, sizeof(dp));
+    for (; x; x /= 10)
+        a[++len] = x % 10;
+    reverse(a + 1, a + len + 1);
+    return dfs(1, 1, 1);
+}
+int main()
+{
+    int l = read(), r = read();
+    printf("%d\n", solve(r) - solve(l - 1));
+    return 0;
+}
+\end{minted}
+
+数位dp中常见的状态设置：
+
+以下为记忆化搜索函数dfs的常设定的形参
+
+\begin{itemize}
+\item
+  pos：int型变量，表示当前枚举的位置，一般从高到低。// pos-1
+\item
+  limit：bool型变量，表示枚举的第pos位是否受到\textbf{限制}，//
+  limit\&\&(i==a{[}pos{]})
+
+  \begin{itemize}
+  \tightlist
+  \item
+    为true表示取的数不能大于a{[}pos{]}，而只有在{[}pos+1,len{]}的位置上填写的数都等于a{[}i{]}时该值才为true
+  \item
+    否则表示当前位没有限制，可以取到{[}0,R−1{]}，因为R进制的数中数位最多能取到的就是R−1
+  \end{itemize}
+\item
+  last：int型变量，表示上一位（第pos+1位）填写的值 // i
+
+  \begin{itemize}
+  \tightlist
+  \item
+    往往用于约束了相邻数位之间的关系的题目
+  \end{itemize}
+\item
+  lead0：bool型变量，表示是否有\textbf{前导零}，即在len→(pos+1)这些位置是不是都是\textbf{前导零}//
+  lead0\&\&(i==0)
+
+  \begin{itemize}
+  \item
+    基于常识，我们往往默认一个数没有前导零，也就是最高位不能为0，即不会写为000123，而是写为123
+  \item
+    只有没有前导零的时候，才能计算0的贡献。
+  \item
+    那么前导零何时跟答案有关？
+
+    \begin{itemize}
+    \tightlist
+    \item
+      统计0的出现次数
+    \item
+      相邻数字的差值
+    \item
+      以最高位为起点确定的奇偶位
+    \end{itemize}
+  \end{itemize}
+\item
+  sum：int型变量，表示当前len→(pos+1)的数位和 // sum+i
+\item
+  r：int型变量，表示整个数前缀取模某个数m的余数 // (10*r+i)\%m
+
+  \begin{itemize}
+  \tightlist
+  \item
+    该参数一般会用在：约束中出现了能被m整除
+  \item
+    当然也可以拓展为数位和取模的结果
+  \end{itemize}
+\item
+  st：int型变量，用于状态压缩 // st\^{}(1\textless{}\textless{}i)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    对一个集合的数在数位上的出现次数的奇偶性有要求时，其二进制形式就可以表示每个数出现的奇偶性
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{ux72b6ux538bdpux89e3ux54c8ux5bc6ux987fux56deux8defux95eeux9898}{%
+\subsection{状压DP解哈密顿回路问题}\label{ux72b6ux538bdpux89e3ux54c8ux5bc6ux987fux56deux8defux95eeux9898}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+
+int dp[(1 << 21)][20];
+
+for (int i = 0; i < (1 << (n + 1)); i++)
+            for (int j = 1; j <= n; j++)
+                if (dp[i][j])
+                    for (int k = 1; k <= n; k++)
+                        if (a[j][k] && (((i >> k) & 1) == 0))
+                            dp[i | (1 << k)][k] = 1;
+
+\end{minted}
+
+\hypertarget{ux6570ux5b66}{%
+\section{4-数学}\label{ux6570ux5b66}}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{ux4e09ux5206-1}{%
+\subsection{三分}\label{ux4e09ux5206-1}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+//寻找cal函数的极小值（极大值则把<改为>）
+while(l<r){
+    ll lmid=l+(r-l)/3;
+    ll rmid=r-(r-l)/3;
+    if(cal(lmid)<cal(rmid)) r=rmid-1;//小于，那么l和r会成为较大的值，小于等于则是较小的值
+    //例如对于函数(x-40)*(x-41)，从整数范围看40和41都能取得极小值
+    //而<时，最后l=r=41；<=时，l=r=40
+    else l=lmid+1;
+}
+\end{minted}
+
+\hypertarget{ux5febux901fux5e42}{%
+\subsection{快速幂}\label{ux5febux901fux5e42}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+int qpow(int a, int n)
+{
+    int ans = 1;
+    while (n)
+    {
+        if (n & 1)
+            ans = ans * a % mod;
+        a = a * a % mod;
+        n >>= 1;
+    }
+    return ans;
+}
+\end{minted}
+
+\hypertarget{exgcd}{%
+\subsection{exgcd}\label{exgcd}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+int exgcd(int a, int b, int &x, int &y)
+{
+    if (b == 0)
+    {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    int d = exgcd(b, a % b, x, y), x0 = x, y0 = y;
+    x = y0;
+    y = x0 - (a / b) * y0;
+    return d;
+}
+\end{minted}
+
+\hypertarget{ux7ebfux6027inv}{%
+\subsection{线性inv}\label{ux7ebfux6027inv}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+void getinv(int n)
+{
+    inv[1] = 1;
+    for (int i = 2; i <= n; i++)
+    {
+        inv[i] = mod - ((mod / i) * inv[mod % i]) % mod;
+    }
+}
+\end{minted}
+
+\hypertarget{ux5206ux5757}{%
+\subsection{分块}\label{ux5206ux5757}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+int ans = 0;
+for (int l = 1, r; l <= n; l = r + 1)
+{
+    r = n / (n / l);
+    ans += (r - l + 1) * (n / l);
+}
+cout << ans << endl;
+\end{minted}
+
+\hypertarget{ux6b27ux62c9ux7b5b}{%
+\subsection{欧拉筛}\label{ux6b27ux62c9ux7b5b}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+int Eular(int n)
+{
+    int cnt = 0;
+    memset(is_prime, true, sizeof(is_prime));
+    is_prime[0] = is_prime[1] = false;
+    for (int i = 2; i <= n; i++)
+    {
+        if (is_prime[i])
+        {
+            prime[++cnt] = i;
+        }
+        for (int j = 1; j <= cnt && i * prime[j] <= n; j++)
+        {
+            is_prime[i * prime[j]] = 0;
+            if (i % prime[j] == 0)
+                break;
+        }
+    }
+    return cnt;
+}
+\end{minted}
+
+\hypertarget{ux6b27ux62c9ux51fdux6570}{%
+\subsection{欧拉函数}\label{ux6b27ux62c9ux51fdux6570}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+int Eular(int n)
+{
+    int cnt = 0;
+    memset(is_prime, true, sizeof(is_prime));
+    is_prime[0] = is_prime[1] = false;
+    for (int i = 2; i <= n; i++)
+    {
+        if (is_prime[i])
+        {
+            prime[++cnt] = i;
+        }
+        for (int j = 1; j <= cnt && i * prime[j] <= n; j++)
+        {
+            is_prime[i * prime[j]] = 0;
+            if (i % prime[j] == 0)
+                break;
+        }
+    }
+    return cnt;
+}
+\end{minted}
+
+\hypertarget{ux7ec4ux5408ux6570}{%
+\subsection{组合数}\label{ux7ec4ux5408ux6570}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+int fac[N];
+int inv[N];
+void init(int n)
+{
+    fac[0] = 1;
+    inv[0] = 1;
+    inv[1] = 1;
+    fac[1] = 1;
+    for (int i = 2; i <= 2 * n; i++)
+    {
+        fac[i] = fac[i - 1] * i % mod;
+        inv[i] = (mod - mod / i) * inv[mod % i] % mod;
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        inv[i] = inv[i] * inv[i - 1] % mod;
+    }
+}
+int C(int n, int m)
+{
+    if (m > n || m < 0 || n < 0)
+        return 0;
+    return fac[n] * inv[m] % mod * inv[n - m] % mod;
+}
+\end{minted}
+
+\hypertarget{ux6269ux5c55ux6b27ux62c9ux5b9aux7406}{%
+\subsection{扩展欧拉定理}\label{ux6269ux5c55ux6b27ux62c9ux5b9aux7406}}
+
+\hypertarget{ux5b9aux4e49}{%
+\subsubsection{定义}\label{ux5b9aux4e49}}
+
+\[
+a^b \equiv \begin{cases}
+  a^{b \bmod \varphi(m)},                &\gcd(a,m) =  1,                   \\
+  a^b,                                   &\gcd(a,m)\ne 1, b <   \varphi(m), \\
+  a^{(b \bmod \varphi(m)) + \varphi(m)}, &\gcd(a,m)\ne 1, b \ge \varphi(m).
+\end{cases} \pmod m
+\]
+
+\hypertarget{ux89e3ux91ca}{%
+\subsubsection{解释}\label{ux89e3ux91ca}}
+
+读者可能对第二行产生疑问，这一行表达的意思是：如果 \(b < \varphi(m)\)
+的话，就不能降幂了。
+
+主要是因为题目中 \(m\) 不会太大，而如果
+\(b < \varphi(m)\)，自然复杂度是可以接受的。而如果 \(b \ge \varphi(m)\)
+的话，复杂度可能就超出预期了，这个时候我们才需要降幂来降低复杂度。
+
+\hypertarget{ux5361ux7279ux5170ux6570}{%
+\subsection{卡特兰数}\label{ux5361ux7279ux5170ux6570}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+int C(int n, int m)
+{
+    return fac[n] * qpow(fac[n - m], mod - 2) % mod * qpow(fac[m], mod - 2) % mod;
+}
+int cat(int n)
+{
+    return C(2 * n, n) * qpow(n + 1, mod - 2) % mod;
+}
+\end{minted}
+
+\hypertarget{ux77e9ux9635}{%
+\subsection{矩阵}\label{ux77e9ux9635}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+struct matrix{
+    ll n;
+    vector<vector<ll>> M;
+    matrix(ll nn){
+        n=nn;
+        M.resize(n+1,vector<ll>(n+1));
+        clear();
+    }
+    void clear(){
+        rep(i,0,n){
+            rep(j,0,n){
+                M[i][j]=0;
+            }
+        }
+    }
+    void reset(){
+        clear();
+        rep(i,0,n){
+            M[i][i]=1;
+        }
+    }
+    matrix operator+(matrix t){
+        matrix ans(n);
+        rep(i,1,n){
+            rep(j,1,n){
+                ans.M[i][j]=(M[i][j]+t.M[i][j])%mod;
+            }
+        }
+        return ans;
+    }
+    matrix operator-(matrix t){
+        matrix ans(n);
+        rep(i,1,n){
+            rep(j,1,n){
+                ans.M[i][j]=(M[i][j]-t.M[i][j]+mod)%mod;
+            }
+        }
+        return ans;
+    }
+    matrix operator*(matrix t){
+        matrix ans(n);
+        rep(i,1,n){
+            rep(j,1,n){
+                rep(k,1,n){
+                    ans.M[i][j]+=M[i][k]*t.M[k][j];
+                    ans.M[i][j]%=mod;
+                }
+            }
+        }
+        return ans;
+    }
+    matrix inv(bool &ret){//只做初等行变换是不会影响结果的
+        ll m=n*2;
+        matrix a(m);
+        rep(i,1,n){
+            rep(j,1,n){
+                a.M[i][j]=M[i][j];
+            }
+            a.M[i][i+n]=1;
+        }
+        matrix ans(n);
+        rep(i,1,n){
+            ll pos=i;
+            rep(j,i+1,n){
+                if(llabs(a.M[j][i])>llabs(a.M[pos][i])){
+                    pos=j;
+                }
+            }
+            //找最大防止这里是0
+            if(i!=pos){
+                swap(a.M[i],a.M[pos]);
+            }
+            if(a.M[i][i]==0){
+                ret=false;
+                return ans;
+            }
+            ll inv=fast(a.M[i][i],mod-2);
+            rep(j,i,m){
+                a.M[i][j]=a.M[i][j]*inv%mod;
+            }
+            rep(j,1,n){
+                if(j==i) continue;
+                ll b=a.M[j][i];
+                rep(k,i,m){
+                    a.M[j][k]=(a.M[j][k]-b*a.M[i][k]%mod+mod)%mod;
+                }
+            }
+        }
+        rep(i,1,n){
+            rep(j,1,n){
+                ans.M[i][j]=a.M[i][j+n];
+            }
+        }
+        return ans;
+    }
+    void print(){
+        rep(i,1,n){
+            rep(j,1,n){
+                cout<<M[i][j]<<" ";
+            }
+            cout<<endl;
+        }
+    }
+    ll fast(ll b,ll idx){
+        ll ans=1;
+        while(idx){
+            if(idx%2) ans=ans*b%mod;
+            b=b*b%mod;
+            idx/=2;
+        }
+        return ans;
+    }
+    friend matrix fast(matrix b,ll idx){
+        matrix ans(b.n);
+        ans.reset();
+        while(idx){
+            if(idx%2) ans=ans*b;
+            b=b*b;
+            idx/=2;
+        }
+        return ans;
+    }
+    //计算E+b+b^2+...+b^idx的矩阵等比数列之和
+    friend matrix sum(matrix b,ll idx){
+        matrix res(b.n),sum(b.n);
+        res.reset(),sum.reset();
+        while(idx){
+            if(idx%2){
+                res=sum+res*b;
+            }
+            sum=sum+sum*b;
+            b=b*b;
+            idx/=2;
+        }
+        return res;
+    }
+};
+\end{minted}
+
+\hypertarget{ux9ad8ux65afux6d88ux5143}{%
+\subsection{高斯消元}\label{ux9ad8ux65afux6d88ux5143}}
+
+求解线性方程组
+
+将各系数合为矩阵，再将其变为上三角矩阵
+
+过程中通常要保证选择的主元绝对值最大以保证精度
+
+n\^{}3
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+const int N = 100;
+const double eps = 1e-10;
+int n;
+double a[N + 1][N + 1], b[N + 1];
+
+void gauss()
+{
+    int l = 1;
+    for (int i = 1; i <= n; i++)
+    { // n列
+        for (int j = l; j <= n; j++)
+        { // 找下面所有行中这一列处绝对值最大的
+            if (abs(a[j][i]) > abs(a[l][i]))
+            {
+                for (int k = i; k <= n; k++)
+                {
+                    swap(a[l][k], a[j][k]);
+                }
+                swap(b[l], b[j]);
+            }
+        }
+        if (abs(a[l][i]) < eps)
+            continue;
+        for (int j = 1; j <= n; j++)
+        { // 对所有其他行，更新值
+            if (j != l && abs(a[j][i]) > eps)
+            {
+                double delta = a[j][i] / a[l][i];
+                for (int k = i; k <= n; k++)
+                {
+                    a[j][k] -= a[l][k] * delta;
+                }
+                b[j] -= b[l] * delta;
+            }
+        }
+        ++l;
+    }
+
+    for (int i = l; i <= n; i++)
+    { // 假如有剩下的行且b值不为0则无解
+        if (abs(b[i]) > eps)
+        {
+            cout << "无解" << endl;
+            return;
+        }
+    }
+    if (l <= n)
+    {
+        cout << "无穷多解" << endl;
+    }
+    else
+    {
+        for (int i = 1; i <= n; i++)
+        {
+            cout << fixed << setprecision(10) << b[i] / a[i][i] << endl;
+        }
+    }
+}
+\end{minted}
+
+\hypertarget{ux7b2cux4e8cux7c7bux65afux7279ux6797ux6570stirling-number}{%
+\subsection{第二类斯特林数（Stirling
+Number）}\label{ux7b2cux4e8cux7c7bux65afux7279ux6797ux6570stirling-number}}
+
+\textbf{第二类斯特林数}（斯特林子集数）\(\begin{Bmatrix}n\\ k\end{Bmatrix}\)，也可记做
+\(S(n,k)\)，表示将 \(n\) 个两两不同的元素，划分为 \(k​\)
+个互不区分的非空子集的方案数。
+
+\hypertarget{ux9012ux63a8ux5f0f}{%
+\subsubsection{递推式}\label{ux9012ux63a8ux5f0f}}
+
+\[
+\begin{Bmatrix}n\\ k\end{Bmatrix}=\begin{Bmatrix}n-1\\ k-1\end{Bmatrix}+k\begin{Bmatrix}n-1\\ k\end{Bmatrix}
+\]
+
+\hypertarget{ux901aux9879ux516cux5f0f}{%
+\subsubsection{通项公式}\label{ux901aux9879ux516cux5f0f}}
+
+\[
+\begin{Bmatrix}n\\m\end{Bmatrix}=\sum\limits_{i=0}^m\dfrac{(-1)^{m-i}i^n}{i!(m-i)!}
+\]
+
+\hypertarget{miller-rabin-ux5224ux8d28ux6570ux4e0e-pollard-rhoux7b97ux6cd5ux6c42ux8d28ux56e0ux6570}{%
+\subsection{Miller-Rabin 判质数与
+Pollard-Rho算法求质因数}\label{miller-rabin-ux5224ux8d28ux6570ux4e0e-pollard-rhoux7b97ux6cd5ux6c42ux8d28ux56e0ux6570}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+ll mul(ll a, ll b, ll m)
+{
+    return static_cast<__int128>(a) * b % m;
+}
+ll power(ll a, ll b, ll m)
+{
+    ll res = 1 % m;
+    for (; b; b >>= 1, a = mul(a, a, m))
+        if (b & 1)
+            res = mul(res, a, m);
+    return res;
+}
+bool isprime(ll n)
+{
+    if (n < 2)
+        return false;
+    static constexpr int A[] = {2, 3, 5, 7, 11, 13, 17, 19, 23};
+    int s = __builtin_ctzll(n - 1);
+    ll d = (n - 1) >> s;
+    for (auto a : A)
+    {
+        if (a == n)
+            return true;
+        ll x = power(a, d, n);
+        if (x == 1 || x == n - 1)
+            continue;
+        bool ok = false;
+        for (int i = 0; i < s - 1; ++i)
+        {
+            x = mul(x, x, n);
+            if (x == n - 1)
+            {
+                ok = true;
+                break;
+            }
+        }
+        if (!ok)
+            return false;
+    }
+    return true;
+}
+vector<ll> factorize(ll n)
+{
+    vector<ll> p;
+    function<void(ll)> f = [&](ll n)
+    {
+        if (n <= 10000)
+        {
+            for (int i = 2; i * i <= n; ++i)
+                for (; n % i == 0; n /= i)
+                    p.push_back(i);
+            if (n > 1)
+                p.push_back(n);
+            return;
+        }
+        if (isprime(n))
+        {
+            p.push_back(n);
+            return;
+        }
+        auto g = [&](ll x)
+        {
+            return (mul(x, x, n) + 1) % n;
+        };
+        ll x0 = 2;
+        while (true)
+        {
+            ll x = x0, y = x0, d = 1, power = 1, lam = 0, v = 1;
+            while (d == 1)
+            {
+                y = g(y);
+                ++lam;
+                v = mul(v, std::abs(x - y), n);
+                if (lam % 127 == 0)
+                {
+                    d = gcd(v, n);
+                    v = 1;
+                }
+                if (power == lam)
+                {
+                    x = y;
+                    power *= 2;
+                    lam = 0;
+                    d = std::gcd(v, n);
+                    v = 1;
+                }
+            }
+            if (d != n)
+            {
+                f(d);
+                f(n / d);
+                return;
+            }
+            ++x0;
+        }
+    };
+    f(n);
+    sort(p.begin(), p.end());
+    return p;
+}
+\end{minted}
+
+\hypertarget{fftux4e0entt}{%
+\subsection{FFT与NTT}\label{fftux4e0entt}}
+
+以模板题\href{https://www.luogu.com.cn/problem/P3803}{P3803
+【模板】多项式乘法（FFT）}为例
+
+\hypertarget{fft}{%
+\subsubsection{FFT}\label{fft}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+//使用vector:737ms/1.83s
+//使用全局C数组:652ms/1.69s
+const double pi=3.14159265358979323846264338;
+const ll rmax=3e6;
+const ll maxn=rmax+10;
+using comp=complex<double>;
+    comp a[maxn];
+    comp b[maxn];
+    ll r[maxn];//这几个东西的范围应该是一个比2e6大的2的某个幂这样子
+void change(comp a[],ll n){
+    rep(i,0,n-1){
+        r[i]=r[i/2]/2;
+        if(i&1) r[i]+=n/2;
+    }
+    rep(i,0,n-1){
+        if(i<r[i]) swap(a[i],a[r[i]]);
+    }
+}
+void fft(comp a[],ll n,ll op){
+    change(a,n);
+    for(ll m=2;m<=n;m<<=1){
+        comp w1({cos(2*pi/m),sin(2*pi/m)*op});//相同的长度具有相同的基底
+        for(ll i=0;i<n;i+=m){
+            comp wk({1,0});
+            for(ll j=0;j<m/2;j++){
+                comp x=a[i+j],y=a[i+j+m/2]*wk;
+                a[i+j]=x+y;
+                a[i+j+m/2]=x-y;
+                wk*=w1;
+            }
+        }
+    }
+}
+void solve(){
+    ll n,m;
+    cin>>n>>m;
+    ll sum=n+m;
+    ll len=1;
+    while(len<=sum){
+        len<<=1;
+    }
+    rep(i,0,n){
+        cin>>a[i];
+    }
+    rep(i,0,m){
+        cin>>b[i];
+    }
+    fft(a,len,1);fft(b,len,1);
+    for(ll i=0;i<len;i++){
+        a[i]=a[i]*b[i];
+    }
+    fft(a,len,-1);
+    rep(i,0,sum){
+        cout<<(ll)(a[i].real()/len+0.05)<<" ";
+    }
+    cout<<endl;
+}
+\end{minted}
+
+\hypertarget{ntt}{%
+\subsubsection{NTT}\label{ntt}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+//使用vector:586ms/1.54s
+//使用全局C数组:522ms/1.41s
+const ll rmax=3e6;
+const ll maxn=rmax+10;
+const ll mod=998244353;
+    ll g=3;//原根
+    ll ginv=332748118;
+    ll a[maxn];
+    ll b[maxn];
+    ll r[maxn];
+ll fast(ll b,ll idx){
+    ll ans=1;
+    while(idx){
+        if(idx&1) ans=ans*b%mod;
+        b=b*b%mod;
+        idx>>=1;
+    }
+    return ans;
+}
+void change(ll a[],ll n){
+    rep(i,0,n-1){
+        r[i]=r[i/2]/2;
+        if(i&1) r[i]+=n/2;
+    }
+    rep(i,0,n-1){
+        if(i<r[i]) swap(a[i],a[r[i]]);
+    }
+}
+void ntt(ll a[],ll n,ll op){
+    change(a,n);
+    for(ll m=2;m<=n;m<<=1){
+        ll w1=(op==1?g:ginv);
+        w1=fast(w1,(mod-1)/m);
+        for(ll i=0;i<n;i+=m){
+            ll wk=1;
+            for(ll j=0;j<m/2;++j){
+                ll x=a[i+j],y=a[i+j+m/2];
+                a[i+j]=(x+y*wk)%mod;
+                a[i+j+m/2]=(x-y*wk%mod+mod)%mod;
+                wk=wk*w1%mod;
+            }
+        }
+    }
+}
+void solve(){
+    ll n,m;
+    cin>>n>>m;
+    ll sum=n+m;
+    ll len=1;
+    while(len<=sum){
+        len<<=1;
+    }
+    rep(i,0,n){
+        cin>>a[i];
+    }
+    rep(i,0,m){
+        cin>>b[i];
+    }
+    ntt(a,len,1);ntt(b,len,1);
+    rep(i,0,len-1){
+        a[i]=a[i]*b[i]%mod;
+    }
+    ntt(a,len,-1);
+    ll leninv=fast(len,mod-2);
+    rep(i,0,sum){
+        cout<<a[i]*leninv%mod<<" ";
+    }
+    cout<<endl;
+}
+\end{minted}
+
+\hypertarget{ux7ebfux6027ux57fa}{%
+\subsection{线性基}\label{ux7ebfux6027ux57fa}}
+
+\hypertarget{ux6784ux5efa}{%
+\subsubsection{构建}\label{ux6784ux5efa}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+    ll p[60];
+void insert(ll x){
+    for(ll i=31;i>=0;i--){
+        if(!(x>>i)) continue;
+        if(!p[i]){
+            p[i]=x;
+            break;
+        }
+        x^=p[i];
+    }
+}
+bool query(ll x){
+    for(ll i=31;i>=0;i--){
+        if((x>>i)&1){
+            x^=p[i];
+        }
+    }
+    return (x==0);
+}
+\end{minted}
+
+\hypertarget{ux4f18ux96c5ux5316}{%
+\subsubsection{优雅化}\label{ux4f18ux96c5ux5316}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+void rebuild(){
+    ll cnt=0;
+    per(i,31,0){
+        per(j,i-1,0){
+            if((p[i]>>j)&1){
+                p[i]^=p[j];
+            }
+        }
+        if(p[i]){
+            p1[cnt++]=p[i];
+        }
+    }
+    reverse(p1,p1+cnt);
+}
+\end{minted}
+
+\hypertarget{ux7ebfux6027ux57faux7684ux4ea4}{%
+\subsubsection{线性基的交}\label{ux7ebfux6027ux57faux7684ux4ea4}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+struct node {
+    ll p[60];
+    node() {memset(p,0,sizeof p);}
+};
+node d,all;
+node merge(const node&a,const node&b) {
+    node res;
+    d=a,all=a; //all表示目前所有可用的低位基 
+    ll k; //k是把Bi和它的低位削减至0所用到的A的异或和 
+    for(int i=0;i<60;++i) {
+        if(!b.p[i]) continue;
+        ll v=b.p[i];
+        k=0;
+        int j;
+        for(j=i;j>=0;--j)
+            if(1LL<<j&v) {
+                if(all.p[j]>0)
+                    v^=all.p[j],k^=d.p[j];
+                else break;
+            }
+        if(!v) res.p[i]=k;
+        else all.p[j]=v,d.p[j]=k;
+    }
+    return res;
+}
+\end{minted}
+
+\hypertarget{ux56feux8bba}{%
+\section{5-图论}\label{ux56feux8bba}}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{ux6700ux77edux8def}{%
+\subsection{最短路}\label{ux6700ux77edux8def}}
+
+\hypertarget{dijkstra}{%
+\subsection{dijkstra}\label{dijkstra}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+const ll maxn = 10+1e5;
+const ll inf = 0x3f3f3f3f;
+typedef pair<ll,ll> pll;
+    vector<pll> mp[100100];
+    ll n,m,s;
+    ll dis[100100];
+    ll vis[100100];
+
+void dij(ll s){
+    for(ll i=1;i<=n;i++){
+        dis[i]=inf;
+    }
+    dis[s]=0;
+    priority_queue<pll,vector<pll>,greater<pll> > q;
+    q.push({dis[s],s});
+    while(!q.empty()){
+        ll u=q.top().second;
+        q.pop();
+        if(vis[u]) continue;
+        vis[u]=1;
+        for(auto [w,v]:mp[u]){
+            if(dis[u]+w<dis[v]){
+                dis[v]=dis[u]+w;
+                q.push({dis[v],v});
+            }
+        }
+    }
+}
+int main() {
+    cin>>n>>m>>s;
+    for(ll i=1;i<=m;i++){
+        ll u,v,w;
+        cin>>u>>v>>w;
+        mp[u].push_back({w,v});
+    }
+    dij(s);
+    for(ll i=1;i<=n;i++)
+        cout<<dis[i]<<" ";
+    return 0;
+}
+\end{minted}
+
+\hypertarget{ux5e76ux67e5ux96c6-1}{%
+\subsection{并查集}\label{ux5e76ux67e5ux96c6-1}}
+
+\begin{quote}
+已移至数据结构部分
+\end{quote}
+
+\hypertarget{ux6700ux5c0fux751fux6210ux6811}{%
+\subsection{最小生成树}\label{ux6700ux5c0fux751fux6210ux6811}}
+
+\hypertarget{prim-on2}{%
+\subsubsection{prim O(n\^{}2)}\label{prim-on2}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+    vector<pll> edge[maxn];
+    ll dis[maxn];
+    ll vis[maxn];
+void update(ll u){
+    for(auto [v,w]:edge[u]){
+        dis[v]=min(dis[v],w);
+    }
+
+}
+ll prim(ll n){
+    for(ll i=1;i<=n;i++){
+        vis[i]=0;
+        dis[i]=inf;
+    }
+    vis[1]=1;
+    update(1);
+    ll ans=0;
+    for(ll i=1;i<=n-1;i++){//连接n-1条边
+        ll pos,mi=inf;
+        for(ll j=1;j<=n;j++){
+            if(vis[j]) continue;
+            if(dis[j]<mi){
+                mi=dis[j];
+                pos=j;
+            }
+        }
+        ans+=mi;
+        vis[pos]=1;
+        update(pos);    
+    }
+    return ans;
+}
+\end{minted}
+
+\hypertarget{prim-omlogm-ux5c0fux6839ux5806ux4f18ux5316}{%
+\subsubsection{prim O(mlogm)
+(小根堆优化)}\label{prim-omlogm-ux5c0fux6839ux5806ux4f18ux5316}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+    vector<pll> edge[maxn];
+    ll dis[maxn];
+    ll vis[maxn];
+ll prim(ll n){
+    for(ll i=1;i<=n;i++){
+        vis[i]=0;
+        dis[i]=inf;
+    }
+    ll ans=0;
+    priority_queue<pll,vector<pll>,greater<pll>> pq;
+    pq.push({0,1});
+    while(!pq.empty()){
+        auto [d,u]=pq.top();
+        pq.pop();
+        if(vis[u]) continue;
+        vis[u]=1;
+        ans+=d;
+        for(auto [v,w]:edge[u]){
+            if(!vis[v]&&w<dis[v]){
+                dis[v]=w;
+                pq.push({dis[v],v});
+            }
+        }
+    }
+    return ans;
+}
+\end{minted}
+
+\hypertarget{kruskal}{%
+\subsubsection{kruskal}\label{kruskal}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+typedef struct{
+    ll u,v,w;
+}eg;
+    eg e[maxm];
+    vector<pll> edge[maxn];
+    ll fa[maxn];
+bool cmp(eg a,eg b){
+    return a.w<b.w;
+}
+ll find(ll a){
+    return (fa[a]==a)?a:(fa[a]=find(fa[a]));
+}
+void merge(ll a,ll b){
+    fa[a]=b;
+}
+ll kruscal(ll n,ll m){
+    for(ll i=1;i<=n;i++){
+        fa[i]=i;
+    }
+    sort(e+1,e+m+1,cmp);
+    ll ans=0;
+    for(ll i=1;i<=m;i++){
+        ll a=find(e[i].u);
+        ll b=find(e[i].v);
+        if(a!=b){
+            merge(a,b);
+            ans+=e[i].w;
+            n--;
+        }
+    }
+    if(n==1){
+        return ans;
+    }else{
+        return inf;
+    }
+}
+for(ll i=1;i<=m;i++){
+    ll u,v,w;
+    cin>>u>>v>>w;
+    edge[u].push_back({v,w});
+    edge[v].push_back({u,w});
+    e[i].u=u;e[i].v=v;e[i].w=w;
+}
+\end{minted}
+
+\hypertarget{ux57faux4e8eux500dux589eux7684lca}{%
+\subsection{基于倍增的LCA}\label{ux57faux4e8eux500dux589eux7684lca}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <bits/stdc++.h>
+using namespace std;
+#define IOS ios::sync_with_stdio(false),cin.tie(nullptr), cout.tie(nullptr);
+#define ll long long
+#define ull unint long long
+#define lowbit(i) ((i) & (-i))
+#define ls(p) (p << 1)
+#define rs(p) (p << 1 | 1)
+#define rep(i, a, b) for (ll i = a; i <= b; i++)
+#define per(i, a, b) for (ll i = a; i >= b; i--)
+
+typedef pair<ll, ll> pll;
+const ll mod = 1e9 + 7;
+const ll inf = 0x3f3f3f3f;
+const ll maxn = 5e5 + 200;
+
+    ll n, q, root; 
+    vector<ll> mp[N];
+    ll lg2[maxn];
+    ll dep[maxn];
+    ll f[maxn][20];
+    ll vis[maxn];
+void dfs(ll u, ll fa = 0){
+    if (vis[u]) return;
+    vis[u] = 1;
+    dep[u] = dep[fa] + 1;
+    f[u][0] = fa;
+    for (ll i = 1; i <= lg2[dep[u]]; i++){
+        f[u][i] = f[f[u][i - 1]][i - 1];
+    }
+    for (auto v : mp[u]){
+        dfs(v, u);
+    }
+}
+ll lca(ll a, ll b){
+    if (dep[a] > dep[b])
+        swap(a, b);
+    while (dep[a] != dep[b])
+        b = f[b][lg2[dep[b] - dep[a]]];
+    if (a == b)
+        return a;
+    for (ll k = lg2[dep[a]]; k >= 0; k--){
+        if (f[a][k] != f[b][k]){
+            a = f[a][k], b = f[b][k];
+        }
+    }
+    return f[a][0];
+}
+int main(){
+    IOS 
+    cin >> n >> q >> root;
+    for (ll i = 1; i < n; i++){
+        ll u, v;
+        cin >> u >> v;
+        mp[u].push_back(v);
+        mp[v].push_back(u);
+    }
+    for (ll i = 2; i <= n; i++){
+        lg2[i] = lg2[i / 2] + 1;
+    }
+    dfs(root);
+    while (q--){
+        ll u, v;
+        cin >> u >> v;
+        cout << lca(u, v) << endl;
+    }
+    return 0;
+}
+\end{minted}
+
+\hypertarget{ux6709ux5411ux56feux5f3aux8054ux901aux5206ux91cf}{%
+\subsection{有向图强联通分量}\label{ux6709ux5411ux56feux5f3aux8054ux901aux5206ux91cf}}
+
+有向非强连通图中的\textbf{极大}强连通子图我们称为\textbf{强连通分量}
+
+如果一个有向图不是强连通图但是将\textbf{所有有向边换成无向边}变成了强连通图，那么该图就是\textbf{弱连通图}。
+
+Kosaraju算法
+
+首先对原图\(G\)进行遍历，记录节点访问\textbf{完}的顺序\(d_i\)，\(d_i\)
+表示第\(i\)个访问完的节点编号。
+
+我们选择最晚\textbf{访问完}的节点，对\(G\)的反向图进行遍历，它能够遍历到的顶点和它组成了一个
+SCC，把该过程所遍历到的节点打标记，接下来继续找最晚\textbf{访问完}且未被打上标记的节点进行遍历操作。
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <bits/stdc++.h>
+#define ll long long
+using namespace std;
+const int Maxn=1e5+7;
+int n,m;
+vector<int>e[Maxn],e1[Maxn];
+// e 存正向边,e1 存反向边 
+bool vis[Maxn];
+int d[Maxn],cnt,col[Maxn],cnt1;
+void dfs1(int u){
+    vis[u]=1;
+    for(auto v:e[u]) if(!vis[v]) dfs1(v);
+    d[++cnt]=u;
+}
+vector<int>ans[Maxn];
+void dfs2(int u){
+    col[u]=cnt1;
+    ans[cnt1].push_back(u);
+    for(auto v:e1[u]) if(!col[v]) dfs2(v);
+}
+int main(){
+    scanf("%d%d",&n,&m);
+    for(int i=1,u,v;i<=m;i++){
+        scanf("%d%d",&u,&v);
+        e[u].push_back(v);
+        e1[v].push_back(u);
+    }
+    for(int i=1;i<=n;i++) if(!vis[i]) dfs1(i);
+    for(int i=n;i;i--) if(!col[d[i]]) ++cnt1,dfs2(d[i]);
+    for(int i=1;i<=cnt1;i++) sort(ans[i].begin(),ans[i].end());
+    printf("%d\n",cnt1);
+    for(int i=1;i<=n;i++){
+        if(ans[col[i]].size()){
+            for(auto j:ans[col[i]]) printf("%d ",j);
+            puts("");
+            ans[col[i]].resize(0);
+        }
+    }
+    return 0;
+}
+\end{minted}
+
+Tarjan算法
+
+在 DFS 过程中，我们会遇到如下 4 种边：
+
+\begin{itemize}
+\item
+  树枝边：DFS 过程中经过的边，即 DFS 搜索树上的边。
+\item
+  前向边：从祖先节点指向后代节点的非树枝边，我们称为前向边。
+\item
+  返祖边（后向边）：从后代节点指向祖先节点的非树枝边，我们称为返祖边（后向边）。
+\item
+  横叉边：两端无祖先关系的非树枝边，我们称为横叉边。
+
+  每个强连通分量都是 DFS 树的一颗子树，搜索时，把当前 DFS
+  树种未处理的节点加入一个栈，回溯时可以判断栈顶到栈中的节点是否构成一个强连通分量。
+\end{itemize}
+
+我们不妨定义\(dfn(u)\)表示节点\(u\)在 DFS
+中的遍历编号（\textbf{时间戳}），\(low(u)\)表示\(u\)或\(u\)的子树能够最多只通过\textbf{一条非树枝边（不包含树边）}回溯的最早的\(dfn\)值，用一个栈记录经过的节点，那么我们可以得出：
+
+\begin{itemize}
+\tightlist
+\item
+  初始情况有\(low(u)=dfn(u)\)。
+\item
+  对于边\((u,v)\)
+  ，如果\(u\)为\(v\)的父亲节点，则有\(low(u)=min(low(u),low(v))\)。
+\item
+  对于边\((u,v)\)为返祖边或者指向非其他强连通的横叉边，则有\(low(u)=min(low(u),dfn(v))\)。
+\end{itemize}
+
+在节点\(u\)搜索完毕之后，如果\(low(u)=dfn(u)\)，那么说明以\(u\)为\textbf{根节点}的搜索子树上及栈中在\(u\)内的元素组成了一个强连通分量，然后删除栈内的这些元素，不断重复该操作直到找到所有的强连通分量。
+
+例 \href{https://www.luogu.com.cn/problem/P3387}{P3387 【模板】缩点 -
+洛谷 \textbar{} 计算机科学教育新生态 (luogu.com.cn)}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <bits/stdc++.h>
+#define ll long long
+using namespace std;
+const int Maxn=1e5+7;
+int n,m;
+vector<int>e[Maxn];
+int col[Maxn],dfn[Maxn],low[Maxn],cnt;
+int stk[Maxn],top,_cnt;
+vector<int>ans[Maxn];
+void Tarjan(int u){
+    dfn[u]=low[u]=++cnt;
+    stk[++top]=u;
+    for(auto v:e[u]){
+        if(!dfn[v]) Tarjan(v),low[u]=min(low[u],low[v]);
+        else if(!col[v]) low[u]=min(low[u],dfn[v]);
+    }
+    if(low[u]==dfn[u]){
+        col[u]=++_cnt;
+        ans[_cnt].push_back(u);
+        while(stk[top]!=u)  
+            ans[_cnt].push_back(stk[top]),col[stk[top--]]=_cnt;
+        --top;
+    }
+}
+int main(){
+    scanf("%d%d",&n,&m);
+    for(int i=1,u,v;i<=m;i++){
+        scanf("%d%d",&u,&v);
+        e[u].push_back(v);
+    }
+    for(int i=1;i<=n;i++) if(!dfn[i]) Tarjan(i);
+    for(int i=1;i<=_cnt;i++) sort(ans[i].begin(),ans[i].end());
+    printf("%d\n",_cnt);
+    for(int i=1;i<=n;i++){
+        if(ans[col[i]].size()){
+            for(auto j:ans[col[i]]) printf("%d ",j);
+            puts("");
+            ans[col[i]].resize(0);
+        }
+    }
+    return 0;
+}
+\end{minted}
+
+\hypertarget{ux5272ux70b9ux5272ux8fb9}{%
+\subsection{割点割边}\label{ux5272ux70b9ux5272ux8fb9}}
+
+\begin{itemize}
+\tightlist
+\item
+  割点：在\textbf{无向图}中，删去该点后使得连通块数增加的结点称为
+  \textbf{割点}。
+\item
+  割边（桥）：在\textbf{无向图}中，删去该边后使得连通块数增加的边称为
+  \textbf{割边（桥）}。
+\end{itemize}
+
+一个图可能会有多个割点或者割边，但是有割点的图不一定存在割边，有割边的图不一定存在割点。
+
+\hypertarget{ux5272ux70b9}{%
+\subsubsection{割点}\label{ux5272ux70b9}}
+
+和有向图求 SCC 一样，我们会在搜索过程中遇到两种搜索树上的边：
+
+\begin{itemize}
+\tightlist
+\item
+  树枝边：DFS 过程中经过的边，即 DFS 搜索树上的边。
+\item
+  返祖边（后向边）：从后代节点指向祖先节点的非树枝边，我们称为返祖边（后向边）。
+\end{itemize}
+
+不包含横叉边和前向边，因为这是\textbf{无向图}。
+
+我们不妨定义\(dfn(u)\)表示节点\(u\)在 DFS
+中的遍历编号（\textbf{时间戳}），\(low(u)\)
+表示\(u\)或\(u\)的子树能够最多只通过\textbf{一条非树枝边（不包含树边）}回溯的最早的\(dfn\)值，那么我们可以得出：
+
+\begin{itemize}
+\tightlist
+\item
+  初始情况有\(low(u)=dfn(u)\)。
+\item
+  对于边\((u,v)\)，如果\(v\)没有被搜索到，那么这条边就是树枝边，则有\(low(u)=min(low(u),low(v))\)。
+\item
+  对于边\((u,v)\)，如果\(v\)被搜索到了，那么这条边就是返祖边，则有\(low(u)=min(low(u),dfn(v))\)。
+\end{itemize}
+
+对于一个节点\(u​\)，它的子节点\(v​\)，若\(low(v)\geq dfn(u)​\)，说明\(v​\)无法通过它子树的节点到达\(dfn​\)更小的节点，也就是\(v​\)无法不经过点\(u​\)到达比\(u​\)的\(dfn​\)值更小的节点，显然\(u​\)是一个割点，反之
+𝑢 \(u​\)就不是一个割点。
+
+但是对于根节点\(u\)，它的\(dfn\)值一定是整个序列的最小值，因此上述方法不管用，如果它存在两个及以上的子节点，那么把\(u\)删除后绝对会把\(u\)子节点的子树分割开来，此时\(u\)是割点。
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <bits/stdc++.h>
+#define ll long long
+using namespace std;
+const ll Maxn=1e5+7;
+struct edge1{
+    ll v,Next;
+}Edge[Maxn<<1];
+ll n,m,tot,low[Maxn],dfn[Maxn],cnt,root,ans,head[Maxn];
+bool flg[Maxn];
+inline void add(ll u,ll v){
+    Edge[++tot]=(edge1){v,head[u]},head[u]=tot;
+}
+void tarjan(ll u){
+    dfn[u]=low[u]=++cnt;
+    ll ch=0;
+    for(ll i=head[u];i;i=Edge[i].Next){
+        ll v=Edge[i].v;
+        if(!dfn[v]){
+            ch++;
+            tarjan(v);
+            low[u]=min(low[u],low[v]);
+            if(low[v]>=dfn[u]&&u!=root) flg[u]=1;
+            
+        }
+        else low[u]=min(low[u],dfn[v]);
+    }
+    if(ch>=2&&root==u) flg[u]=1;
+}
+int main(){
+    scanf("%lld%lld",&n,&m);
+    for(ll i=1,u,v;i<=m;i++) 
+        scanf("%lld%lld",&u,&v),add(u,v),add(v,u); 
+    for(ll i=1;i<=n;i++)
+        if(!dfn[i])
+            root=i,tarjan(i);
+    for(ll i=1;i<=n;i++)
+        if(flg[i])
+            ++ans;
+    printf("%lld\n",ans);
+    for(ll i=1;i<=n;i++)
+        if(flg[i])
+            printf("%lld ",i);
+    return 0;
+}
+\end{minted}
+
+\hypertarget{ux5272ux8fb9}{%
+\subsubsection{割边}\label{ux5272ux8fb9}}
+
+割边的求法和割点的求法类似，我们继续使用相同定义的\(low\)和\(dfn\)。
+
+很显然，树枝边使得整个图连通，而非树边删除后并不影响图的连通性，因此\textbf{割边一定是树枝边}。
+
+假设当前节点为\(u\)，它有子节点\(v\)，那么边\((u,v)\)为割边时当且仅当\(low(v) > dfn(u)\)，只要\(v\)的节点能通过非树边来到比\(u\)的\(dfn\)更小的节点，那么\(u,v\)就不是割边，不取等号的原因是它是一条边而非一个节点。
+
+现在唯一的问题就是判断一条边是否为非树边，我们不能直接将\(v \rightarrow u​\)（\(u​\)是\(v​\)的父亲）识别成非树边，这样可能将树边也识别成非树边。
+
+tarjan
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include<bits/stdc++.h>
+#define int long long
+const int N=1e6+1;
+using namespace std;
+struct fy
+{
+    int v,next;
+}edge[N];
+struct fy_
+{
+    int from,to;
+}E[N];
+int dfn[N],low[N],n,m,x,y,idx,head[N],res,cnt,IDX;
+bool g[N];
+inline void add(int x,int y)
+{
+    edge[++cnt].v=y,edge[cnt].next=head[x],head[x]=cnt;
+}
+inline void dfs(int u,int fa)
+{
+    dfn[u]=low[u]=++idx;
+    for(int i=head[u];i;i=edge[i].next)
+    {
+        int v=edge[i].v;
+        if(!dfn[v])
+        {
+            dfs(v,u);
+            low[u]=min(low[u],low[v]);
+            if(low[v]>dfn[u])
+                E[++IDX].from=min(u,v),E[IDX].to=max(u,v);
+        }
+        else if(v!=fa&&dfn[v]<dfn[u])
+            low[u]=min(low[u],dfn[v]);
+    }
+}
+signed main()
+{
+    scanf("%lld%lld",&n,&m);
+    for(int i=1;i<=m;i++)
+    {
+        scanf("%lld%lld",&x,&y);
+        add(x,y),add(y,x);
+    }
+    dfs(1,-1);
+    for(int i=1;i<=IDX;i++)
+        printf("%lld %lld\n",E[i].from,E[i].to);
+}
+\end{minted}
+
+树上差分
+
+对于每一条非树边，在其树上深度较小的点处打上 \texttt{-1}
+标记，在其树上深度较大的点处打上 \texttt{+1}
+标记。然后求出每个点的子树内部的标记之和。对于一个点u，其子树内部的标记之和等于覆盖了
+u和u的父亲之间的树边的非树边数量。若这个值非0，则u和u的父亲之间的树边不是桥，否则是桥。
+
+\hypertarget{ux53ccux8054ux901aux5206ux91cf}{%
+\subsection{双联通分量}\label{ux53ccux8054ux901aux5206ux91cf}}
+
+双连通分量分为\textbf{点双连通分量}和\textbf{边双连通分量}。
+
+边双连通具有传递性，点双连通 \textbf{不} 具有传递性
+
+\begin{itemize}
+\item
+  点双连通图：\textbf{不存在割点的无向连通图}我们称为\textbf{点双联通图}。
+\item
+  边双连通图：\textbf{不存在割边的无向连通图}我们称为\textbf{边双联通图}。
+\item
+  点双连通分量（点双）：一张图的极大点双连通子图称为\textbf{点双连通分量（V-BCC）。}
+\item
+  边双连通分量（边双）：一张图的极大边双连通子图称为\textbf{边双连通分量（E-BCC）}。
+\item
+  点双连通：若两点\(u,v\)在同一个点双连通分量内，那么我们称\(u,v\)点双连通。
+\item
+  边双联通：若两点\(u,v\)在同一个边双连通分量内，那么我们称\(u,v\)边双连通。
+
+  在一张无向图中，如果\((u,v)\)直接相连，那么\(u,v\)点双连通，但不一定边双连通。
+
+  同时，双连通分量还有一个很好的性质，我们将强连通分量缩点后可以得到一个
+  \textbf{DAG}，但是双连通分量缩点之后可以得到\textbf{一棵树}，也就是我们在进阶中要讲的\textbf{圆方树}。
+\end{itemize}
+
+\hypertarget{ux8fb9ux53ccux8fdeux901aux5206ux91cf}{%
+\subsubsection{边双连通分量}\label{ux8fb9ux53ccux8fdeux901aux5206ux91cf}}
+
+边双连通分量事实上很好求。
+
+我们只需将该无向图的所有割边删去，整张图就会分裂成\textbf{割边数量+1}个联通块，这些联通块内不存在割边，也就是该图分裂成了若干个边双连通分量。
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <bits/stdc++.h>
+#define ll long long
+using namespace std;
+const ll Maxn=4e6+7;
+struct edge1{
+    ll u,v,Next;
+}Edge[Maxn<<1];
+ll n,m,tot=1,f[Maxn];
+ll low[Maxn],dfn[Maxn],cnt,head[Maxn];
+ll cl;
+vector<ll>ans[Maxn];
+bool flg[Maxn],vis[Maxn];
+inline void add(ll u,ll v){
+    Edge[++tot]=(edge1){u,v,head[u]},head[u]=tot;
+}
+void tarjan(ll u){
+    dfn[u]=low[u]=++cnt;
+    for(ll i=head[u];i;i=Edge[i].Next){
+        if(i==(f[u]^1)) continue;
+        ll v=Edge[i].v;
+        if(!dfn[v]){
+            f[v]=i;
+            tarjan(v);
+            low[u]=min(low[u],low[v]);
+            if(low[v]>dfn[u]) flg[i]=flg[i^1]=1;
+        }
+        else low[u]=min(low[u],dfn[v]);
+    }
+}
+void DFS(ll u){
+    vis[u]=1;
+    ans[cl].push_back(u);
+    for(ll i=head[u];i;i=Edge[i].Next){
+        if(!flg[i]&&!vis[Edge[i].v]){
+            DFS(Edge[i].v);
+        }
+    }
+}
+int main(){
+    scanf("%lld%lld",&n,&m);
+    for(ll i=1,u,v;i<=m;i++) 
+        scanf("%lld%lld",&u,&v),add(u,v),add(v,u); 
+    for(ll i=1;i<=n;i++) if(!dfn[i]) tarjan(i);
+    for(ll i=1;i<=n;i++) if(!vis[i]) ++cl,DFS(i);
+    printf("%lld\n",cl);
+    for(ll i=1;i<=cl;i++,puts("")){
+        printf("%lld ",ans[i].size());
+        for(auto j:ans[i]) printf("%lld ",j);
+    }
+    return 0;
+}
+\end{minted}
+
+\hypertarget{ux70b9ux53ccux8fdeux901aux5206ux91cf}{%
+\subsubsection{点双连通分量}\label{ux70b9ux53ccux8fdeux901aux5206ux91cf}}
+
+对于一个点双，它在 DFS 搜索树中\(dfn\)值最小的点一定是割点或者树根。
+
+当这个点是割点时，它所属的点双必定不可以向它的父亲方向包括更多点，因为一旦回溯，它就成为了新的子图的一个割点，不是点双。所以它应该归到其中一个或多个子树里的点双中。
+
+当这个点是树根时，它的\(dfn\)值是整棵树里最小的。它若有两个以上子树，那么它是一个割点；它若只有一个子树，它一定属于它的直系儿子的点双，因为包括它；它若是一个独立点，视作一个单独的点双。
+
+换句话说，一个点双一定在这两类点的子树中。
+
+我们用栈维护点，当遇到这两类点时，将子树内目前不属于其它点双的非割点或在子树中的割点归到一个新的点双。注意这个点可能还是与其它点双的公共点，所以不能将其出栈。
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 5e5 + 5, M = 4e6 + 5;
+int cnt = 1, fir[N], nxt[M], to[M];
+int s[M], top, bcc, low[N], dfn[N], idx, n, m;
+vector<int> ans[N];
+inline void tarjan(int u, int fa) {
+    int son = 0;
+    low[u] = dfn[u] = ++idx;
+    s[++top] = u;
+    for(int i = fir[u]; i; i = nxt[i]) {
+        int v = to[i];
+        if(!dfn[v]) {
+            son++;
+            tarjan(v, u);
+            low[u] = min(low[u], low[v]);
+            if(low[v] >= dfn[u]) {
+                bcc++;
+                while(s[top + 1] != v) ans[bcc].push_back(s[top--]);//将子树出栈
+                ans[bcc].push_back(u);//把割点/树根也丢到点双里
+            }
+        } else if(v != fa) low[u] = min(low[u], dfn[v]);
+    }
+    if(fa == 0 && son == 0) ans[++bcc].push_back(u);//特判独立点
+}
+inline void add(int u, int v) {
+    to[++cnt] = v;
+    nxt[cnt] = fir[u];
+    fir[u] = cnt;
+}
+int main() {
+    scanf("%d%d", &n, &m);
+    for(int i = 1; i <= m; i++) {
+        int u, v;
+        scanf("%d%d", &u, &v);
+        add(u, v), add(v, u);
+    }
+    for(int i = 1; i <= n; i++) {
+        if(dfn[i]) continue;
+        top = 0;
+        tarjan(i, 0);
+    }
+    printf("%d\n", bcc);
+    for(int i = 1; i <= bcc; i++) {
+        printf("%d ", ans[i].size());
+        for(int j : ans[i]) printf("%d ", j);
+        printf("\n");
+    }
+    return 0;
+}
+\end{minted}
+
+\hypertarget{ux6811ux94feux5256ux5206-hld}{%
+\subsection{树链剖分 HLD}\label{ux6811ux94feux5256ux5206-hld}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+using ll = long long;
+using Graph = vector<vector<int>>;
+struct HLD
+{
+    vector<int> id, sz, son, fa, top, dep;
+    int root, tot;
+    Graph g;
+
+    HLD() {};
+
+    HLD(int _n, int _root = 1)
+    {
+        init(_n + 1, _root);
+    }
+
+    HLD(Graph &_g, int _root = 1)
+    {
+        init(_g, _root);
+    }
+
+    // fundamental functions
+    void init(Graph &_g, int _root)
+    {
+        g = _g;
+        id.resize(_g.size());
+        sz.resize(_g.size());
+        son.resize(_g.size());
+        fa.resize(_g.size());
+        top.resize(_g.size());
+        dep.resize(_g.size());
+        tot = 0;
+        root = _root;
+
+        calc();
+    }
+
+    void init(int n, int _root)
+    {
+        id.resize(n);
+        sz.resize(n);
+        son.resize(n);
+        fa.resize(n);
+        top.resize(n);
+        dep.resize(n);
+        tot = 0;
+        root = _root;
+        g.assign(n, {});
+        // remember calc()
+    }
+
+    void calc()
+    { // prepare fa, sz, dep, son(heavy son)
+        function<void(int, int)> dfs = [&](int now, int f)
+        {
+            fa[now] = f;
+            sz[now] = 1;
+            dep[now] = dep[f] + 1;
+            for (auto i : g[now])
+                if (i != f)
+                {
+                    dfs(i, now);
+                    sz[now] += sz[i];
+                    if (sz[i] > sz[son[now]])
+                        son[now] = i;
+                }
+        };
+        dfs(root, root);
+
+        // id -> dfn; top -> head of the chain
+        dfs = [&](int now, int f)
+        {
+            top[now] = f;
+            id[now] = ++tot;
+            if (son[now] == 0)
+                return;
+            dfs(son[now], f); // heavy chain
+            for (auto i : g[now])
+                if (i != fa[now] && i != son[now])
+                    dfs(i, i); // light chain
+        };
+        dfs(root, root);
+    }
+
+    void addEdge(int u, int v)
+    {
+        g[u].push_back(v), g[v].push_back(u);
+    }
+
+    // tool functions
+    int lca(int x, int y)
+    {
+        while (top[x] != top[y])
+        {
+            if (dep[top[x]] > dep[top[y]])
+                x = fa[top[x]];
+            else
+                y = fa[top[y]];
+        }
+        return (dep[x] > dep[y]) ? y : x;
+    }
+
+    int dist(int u, int v)
+    {
+        return dep[u] + dep[v] - 2 * dep[lca(u, v)];
+    }
+};
+\end{minted}
+
+处理： * 以 \texttt{u} 为根的子树在
+\texttt{id{[}u{]},\ id{[}u{]}\ +\ sz{[}u{]}\ -\ 1} 区间上。 *
+处理两点间简单路径的实例，其中update是区间加。
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+void pathAdd(int u, int v, int x)
+{
+    while (top[u] != top[v])
+    {
+        if (dep[top[u]] < dep[top[v]])
+            swap(u, v);
+        update(id[top[u]], id[u], x);
+        u = fa[top[u]];
+    }
+    if (dep[u] > dep[v])
+        swap(u, v);
+    update(id[u], id[v], x);
+}
+\end{minted}
+
+\begin{itemize}
+\tightlist
+\item
+  对\texttt{u,\ v}之间简单路径做树上差分的做法是
+  \texttt{tag{[}u{]}++,\ tag{[}v{]}++,\ tag{[}lca{]}-\/-,\ tag{[}fa{[}lca{]}{]}-\/-}。
+\end{itemize}
+
+\hypertarget{ux4e8cux5206ux56feux6700ux5927ux5339ux914dux95eeux9898}{%
+\subsection{二分图最大匹配问题}\label{ux4e8cux5206ux56feux6700ux5927ux5339ux914dux95eeux9898}}
+
+匈牙利算法
+
+用于解决二分图最大匹配问题（如：存在若干男女及其喜欢关系（没有同性恋），求最大匹配数/匹配时人不可重复使用）
+
+dfs解：\href{https://www.luogu.com.cn/problem/P3386}{P3386
+二分图最大匹配 洛谷}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+    //男女生模型
+    vector<ll> edge[maxn];//edge[u]里面有v代表男生u和女生v可以相连
+    ll vis[maxn];//vis[v],在该次dfs下，女生v是否已经配对
+    ll match[maxn];//match[v]=u,女生v和男生u配对
+bool dfs(ll now){
+    for(auto t:edge[now]){
+        if(vis[t]) continue;
+        vis[t]=1;
+        if(!match[t]||dfs(match[t])){
+            match[t]=now;
+            return true;
+        }
+    }
+    return false;
+}
+void solve(){
+    ll n,m,e;
+    cin>>n>>m>>e;
+    rep(i,1,e){
+        ll u,v;
+        cin>>u>>v;
+        edge[u].push_back(v);
+    }
+    ll ans=0;
+    rep(i,1,n){
+        rep(j,1,m){
+            vis[j]=0;
+        }
+        if(dfs(i)) ans++;
+    }
+    cout<<ans<<endl;
+}
+\end{minted}
+
+这道题比较特殊，两类点是可以在一开始就明确分好的，下面给出一个未知分类的，较为通用的解
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+    vector<ll> edge[maxn];
+    ll vis[maxn];
+    ll match[maxn];
+    ll tag;
+bool dfs(ll now){
+    for(auto t:edge[now]){
+        if(vis[t]==tag) continue;
+        vis[t]=tag;
+        if(!match[t]||dfs(match[t])){
+            match[t]=now;
+            match[now]=t;
+            return true;
+        }
+    }
+    return false;
+}
+ll hungarian(ll n,ll m){
+    ll ans=0;
+    rep(i,1,n){
+        if(match[i]) continue;
+        tag=i;//类似时间戳
+        if(dfs(i)) ans++;
+    }
+    return ans;
+}
+\end{minted}
+
+\hypertarget{ux5deeux5206ux7ea6ux675f}{%
+\subsection{差分约束}\label{ux5deeux5206ux7ea6ux675f}}
+
+给出一组包含m个不等式，n个未知数的不等式组
+
+​形如：\(x_i\)-\(x_j\)\textless{}=\(y_k\)
+
+求满足这个不等式组的非负解，并且每个变量尽量小
+
+n,m\textless{}=5e3, -1e4\textless{}=y\textless{}=1e4
+
+输出n个数，若无解则输出-1
+
+\textbf{无解判断}
+
+对每一个scc，如果其中全部边边权都为0，则有解，否则无解
+
+有解后可以通过缩点化为dag
+
+\textbf{求一组解：}
+
+o(n*m)
+
+类似bellman-ford
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+cin>>n>>m;
+vector<array<int,3>>e;
+for(int i=1;i<=m;i++){
+    int l,r,w;cin>>l>>r>>w;
+    e.push_back({l,r,w});
+}
+for(int i=0;i<=n;i++){
+    for(auto [l,r,w]:e){
+        x[l] = min(x[l],x[r]+w);
+    }
+}
+for(auto [l,r,w]:e){
+    if(x[l]>x[r]+w){
+        cout<<-1<<endl;return;
+    }
+}
+for(int i=1;i<=n;i++){
+    cout<<x[i]<<" ";
+}cout<<endl;
+\end{minted}
+
+为了\textbf{求非负解}，令x{[}0{]}=0;
+
+添加条件 \(x_0\) - \(x_i\) \textless{}= 0
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+for(int i=1;i<=n;i++){
+    e.push_back(0,i,0);
+}
+for(int i=1;i<=n;i++){
+    x[i] = 1<<30;
+}
+\end{minted}
+
+通过这样求出来的是满足条件的\textbf{最大值}
+
+为了\textbf{求最小值}，可以转化不等式为 \(x_j\) \textgreater{}= \(x_i\)
+- \(w\);
+
+存储部分不变
+
+迭代代码变为：
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+for (int i=0;i<=n;i++){
+    for(auto [l,r,w]:e){
+        x[r] = max(x[r],x[l]-w);
+    }
+}
+\end{minted}
+
+迭代部分也可利用spfa或dijstra优化
+
+例： \#\#\#\# 题目描述
+
+给出一组包含 \(m\) 个不等式，有 \(n\) 个未知数的形如：
+
+\[ \begin{cases} x_{c_1}-x_{c'_1}\leq y_1 \\x_{c_2}-x_{c'_2} \leq y_2 \\ \cdots\\ x_{c_m} - x_{c'_m}\leq y_m\end{cases}\]
+
+的不等式组，求任意一组满足这个不等式组的解。
+
+\hypertarget{ux8f93ux5165ux683cux5f0f}{%
+\paragraph{输入格式}\label{ux8f93ux5165ux683cux5f0f}}
+
+第一行为两个正整数 \(n,m\)，代表未知数的数量和不等式的数量。
+
+接下来 \(m\) 行，每行包含三个整数 \(c,c',y\)，代表一个不等式
+\(x_c-x_{c'}\leq y\)。
+
+\hypertarget{ux8f93ux51faux683cux5f0f}{%
+\paragraph{输出格式}\label{ux8f93ux51faux683cux5f0f}}
+
+一行，\(n\) 个数，表示 \(x_1 , x_2 \cdots x_n\)
+的一组可行解，如果有多组解，请输出任意一组，无解请输出 \texttt{NO}。
+
+\hypertarget{ux6837ux4f8b-1}{%
+\paragraph{样例 \#1}\label{ux6837ux4f8b-1}}
+
+\hypertarget{ux6837ux4f8bux8f93ux5165-1}{%
+\subparagraph{样例输入 \#1}\label{ux6837ux4f8bux8f93ux5165-1}}
+
+\begin{verbatim}
+3 3
+1 2 3
+2 3 -2
+1 3 1
+\end{verbatim}
+
+\hypertarget{ux6837ux4f8bux8f93ux51fa-1}{%
+\subparagraph{样例输出 \#1}\label{ux6837ux4f8bux8f93ux51fa-1}}
+
+\begin{verbatim}
+5 3 5
+\end{verbatim}
+
+\textbf{数据范围}
+
+对于 \(100\%\)
+的数据，\(1\leq n,m \leq 5\times 10^3\)，\(-10^4\leq y\leq 10^4\)，\(1\leq c,c'\leq n\)，\(c \neq c'\)。
+
+\hypertarget{ux9898ux89e3}{%
+\paragraph{题解}\label{ux9898ux89e3}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include<bits/stdc++.h>
+#define ll long long
+#define endl '\n'
+#define rep(i,a,b) for(ll i=a;i<=b;++i)
+using namespace std;
+#define int long long
+// const ll maxn=10+1e5;
+const long long mod = 998244353;
+
+const int N = 5010;
+const int M = 5010;
+int n,m;
+vector<array<int,3>>e;
+int x[5010];
+void solve()
+{   
+    cin>>n>>m;
+    for(int i=1;i<=m;i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        e.push_back({u,v,w});
+    }
+    for(int i=1;i<=n;i++){
+        for(auto [u,v,w]:e){
+            x[u] = min(x[u],x[v]+w);
+        }
+    }
+    for(auto [u,v,w]:e){
+        if(x[u]>x[v]+w){
+            cout<<"NO"<<endl;return;
+        }
+    }
+    for(int i=1;i<=n;i++){
+        cout<<x[i]<<" ";
+    }cout<<endl;
+}
+
+signed main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+
+    ll T=1; 
+    //cin>>T;
+    while(T--){
+        solve();
+    }
+}
+\end{minted}
+
+\hypertarget{sat}{%
+\subsection{2-sat}\label{sat}}
+
+2-SAT，简单的说就是给出n个集合，每个集合有两个元素，已知若干个\textless{}a,b\textgreater{}，表示
+a与b矛盾（其中a与
+b属于不同的集合）。然后从每个集合选择一个元素，判断能否一共选
+n个两两不矛盾的元素。显然可能有多种选择方案，一般题中只需要求出一种即可。
+
+eg.\href{https://www.luogu.com.cn/problem/P4782}{P4782 【模板】2-SAT -
+洛谷 \textbar{} 计算机科学教育新生态 (luogu.com.cn)}
+
+\hypertarget{ux6a21ux677f2-sat}{%
+\subsubsection{【模板】2-SAT}\label{ux6a21ux677f2-sat}}
+
+\hypertarget{ux9898ux76eeux63cfux8ff0}{%
+\paragraph{题目描述}\label{ux9898ux76eeux63cfux8ff0}}
+
+有 \(n\) 个布尔变量 \(x_1\)\(\sim\)\(x_n\)，另有 \(m\)
+个需要满足的条件，每个条件的形式都是 「\(x_i\) 为 \texttt{true} /
+\texttt{false} 或 \(x_j\) 为 \texttt{true} / \texttt{false}」。比如
+「\(x_1\) 为真或 \(x_3\) 为假」、「\(x_7\) 为假或 \(x_2\) 为假」。
+
+2-SAT 问题的目标是给每个变量赋值使得所有条件得到满足。
+
+\hypertarget{ux8f93ux5165ux683cux5f0f-1}{%
+\paragraph{输入格式}\label{ux8f93ux5165ux683cux5f0f-1}}
+
+第一行两个整数 \(n\) 和 \(m\)，意义如题面所述。
+
+接下来 \(m\) 行每行 \(4\) 个整数 \(i\), \(a\), \(j\), \(b\)，表示
+「\(x_i\) 为 \(a\) 或 \(x_j\) 为 \(b\)」(\(a, b\in \{0,1\}\))
+
+\hypertarget{ux8f93ux51faux683cux5f0f-1}{%
+\paragraph{输出格式}\label{ux8f93ux51faux683cux5f0f-1}}
+
+如无解，输出 \texttt{IMPOSSIBLE}；否则输出 \texttt{POSSIBLE}。
+
+下一行 \(n\) 个整数
+\(x_1\sim x_n\)（\(x_i\in\{0,1\}\)），表示构造出的解。
+
+\hypertarget{ux6837ux4f8b-1-1}{%
+\paragraph{样例 \#1}\label{ux6837ux4f8b-1-1}}
+
+\hypertarget{ux6837ux4f8bux8f93ux5165-1-1}{%
+\subparagraph{样例输入 \#1}\label{ux6837ux4f8bux8f93ux5165-1-1}}
+
+\begin{verbatim}
+3 1
+1 1 3 0
+\end{verbatim}
+
+\hypertarget{ux6837ux4f8bux8f93ux51fa-1-1}{%
+\subparagraph{样例输出 \#1}\label{ux6837ux4f8bux8f93ux51fa-1-1}}
+
+\begin{verbatim}
+POSSIBLE
+0 0 0
+\end{verbatim}
+
+\hypertarget{ux63d0ux793a}{%
+\paragraph{提示}\label{ux63d0ux793a}}
+
+\(1\leq n, m\leq 10^6\) , 前 \(3\) 个点卡小错误，后面 \(5\) 个点卡效率。
+
+由于数据随机生成，可能会含有（ 10 0 10
+0）之类的坑，但按照最常规写法的写的标程没有出错，各个数据点卡什么的提示在标程里。
+
+\hypertarget{ux601dux8def}{%
+\paragraph{思路}\label{ux601dux8def}}
+
+对{[}i,a,j,b{]}
+
+化成两条边 \(\lnot i \to j\) 、 \(\lnot j \to j\)
+
+对建好的图跑tarjan
+
+若最终存在 i 使得
+\(\lnot i\)和i在同一个scc中，则无解，否则取拓扑序中靠后的元素
+
+\hypertarget{ux9898ux89e3-1}{%
+\paragraph{题解}\label{ux9898ux89e3-1}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include<bits/stdc++.h>
+#define ll long long
+#define endl '\n'
+#define rep(i,a,b) for(ll i=a;i<=b;++i)
+using namespace std;
+#define int long long
+// const ll maxn=10+1e5;
+const long long mod = 998244353;
+
+const int N = 2000005;
+const int M = 2000005;
+vector<int>e[N];
+int col[N],dfn[N],low[N],cnt;
+int stk[N],top,_cnt;
+vector<int>ans[N];
+
+int n,m;
+void Tarjan(int u){
+    dfn[u]=low[u]=++cnt;
+    stk[++top]=u;
+    for(auto v:e[u]){
+        if(!dfn[v]) Tarjan(v),low[u]=min(low[u],low[v]);
+        else if(!col[v]) low[u]=min(low[u],dfn[v]);
+    }
+    if(low[u]==dfn[u]){
+        col[u]=++_cnt;
+        ans[_cnt].push_back(u);
+        while(stk[top]!=u)  
+            ans[_cnt].push_back(stk[top]),col[stk[top--]]=_cnt;
+        --top;
+    }
+}
+
+void solve()
+{   cin>>n>>m;
+    for(int i=1;i<=m;i++){
+        int u,a,v,b;cin>>u>>a>>v>>b;
+        u--;v--;
+        u=2*u+a;
+        v=2*v+b;
+        e[u^1].push_back(v);
+        e[v^1].push_back(u);
+    }
+    for(int i=0;i<2*n;i++){
+        if(!dfn[i]){
+            Tarjan(i);
+        }
+    }
+    for(int i=0;i<2*n;i+=2){
+        if(col[i]==col[i^1]){
+            cout<<"IMPOSSIBLE"<<endl;return;
+        }
+    }
+    cout<<"POSSIBLE"<<endl;
+    for(int i=0;i<2*n;i+=2){
+        if(col[i]<col[i^1]){//此时非i拓扑序更靠后
+            cout<<0<<" ";
+        }
+        else{
+            cout<<1<<" ";
+        }
+    }
+    cout<<endl;
+}
+
+signed main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+
+    ll T=1; 
+    //cin>>T;
+    while(T--){
+        solve();
+    }
+}
+\end{minted}
+
+\hypertarget{jsoi2010-ux6ee1ux6c49ux5168ux5e2d}{%
+\subsubsection{{[}JSOI2010{]}
+满汉全席}\label{jsoi2010-ux6ee1ux6c49ux5168ux5e2d}}
+
+\hypertarget{ux9898ux76eeux63cfux8ff0-1}{%
+\paragraph{题目描述}\label{ux9898ux76eeux63cfux8ff0-1}}
+
+满汉全席是中国最丰盛的宴客菜肴，有许多种不同的材料透过满族或是汉族的料理方式，呈现在数量繁多的菜色之中。由于菜色众多而繁杂，只有极少数博学多闻技艺高超的厨师能够做出满汉全席，而能够烹饪出经过专家认证的满汉全席，也是中国厨师最大的荣誉之一。世界满汉全席协会是由能够料理满汉全席的专家厨师们所组成，而他们之间还细分为许多不同等级的厨师。
+
+为了招收新进的厨师进入世界满汉全席协会，将于近日举办满汉全席大赛，协会派遣许多会员当作评审员，为的就是要在参赛的厨师之中，找到满汉界的明日之星。
+
+大会的规则如下：每位参赛的选手可以得到 \(n\)
+种材料，选手可以自由选择用满式或是汉式料理将材料当成菜肴。
+
+大会的评审制度是：共有 \(m\)
+位评审员分别把关。每一位评审员对于满汉全席有各自独特的见解，但基本见解是，要有两样菜色作为满汉全席的标志。如某评审认为，如果没有汉式东坡肉跟满式的涮羊肉锅，就不能算是满汉全席。但避免过于有主见的审核，大会规定一个评审员除非是在认为必备的两样菜色都没有做出来的状况下，才能淘汰一位选手，否则不能淘汰一位选手。
+
+换句话说，只要参赛者能在这两种材料的做法中，其中一个符合评审的喜好即可通过该评审的审查。如材料有猪肉，羊肉和牛肉时，有四位评审员的喜好如下表：
+
+\begin{verbatim}
+评审一 评审二 评审三 评审四 
+满式牛肉 满式猪肉 汉式牛肉 汉式牛肉 
+汉式猪肉 满式羊肉 汉式猪肉 满式羊肉 
+\end{verbatim}
+
+如参赛者甲做出满式猪肉，满式羊肉和满式牛肉料理，他将无法满足评审三的要求，无法通过评审。而参赛者乙做出汉式猪肉，满式羊肉和满式牛肉料理，就可以满足所有评审的要求。
+
+但大会后来发现，在这样的制度下如果材料选择跟派出的评审员没有特别安排好的话，所有的参赛者最多只能通过部分评审员的审查而不是全部，所以可能会发生没有人通过考核的情形。
+
+如有四个评审员喜好如下表时，则不论参赛者采取什么样的做法，都不可能通过所有评审的考核：
+
+\begin{verbatim}
+评审一 评审二 评审三 评审四 
+满式羊肉 满式猪肉 汉式羊肉 汉式羊肉 
+汉式猪肉 满式羊肉 汉式猪肉 满式猪肉 
+\end{verbatim}
+
+所以大会希望有人能写一个程序来判断，所选出的 \(m\)
+位评审，会不会发生没有人能通过考核的窘境，以便协会组织合适的评审团。
+
+\hypertarget{ux8f93ux5165ux683cux5f0f-2}{%
+\paragraph{输入格式}\label{ux8f93ux5165ux683cux5f0f-2}}
+
+第一行包含一个数字 \(K\)（\(1\le K \le 50\)），代表测试文件包含了 \(K\)
+组数据。
+
+每一组测试数据的第一行包含两个数字 \(n\) 跟
+\(m\)（\(n≤100\)，\(m≤1000\)），代表有 \(n\) 种材料，\(m\) 位评审员。
+
+为方便起见，舍弃做法的中文名称而给予编号，编号分别从 \(1\) 到 \(n\)。
+
+接下来的 \(m\)
+行，每行都代表对应的评审员所拥有的两个喜好，每个喜好由一个英文字母跟一个数字代表，如
+\(m1\) 代表这个评审喜欢第 \(1\) 个材料透过满式料理做出来的菜，而 \(h2\)
+代表这个评审员喜欢第 \(2\) 个材料透过汉式料理做出来的菜。
+
+\hypertarget{ux8f93ux51faux683cux5f0f-2}{%
+\paragraph{输出格式}\label{ux8f93ux51faux683cux5f0f-2}}
+
+每组测试数据输出一行，如果不会发生没有人能通过考核的窘境，输出
+\texttt{GOOD}；否则输出 \texttt{BAD}（均为大写字母）。
+
+\hypertarget{ux6837ux4f8b-1-2}{%
+\paragraph{样例 \#1}\label{ux6837ux4f8b-1-2}}
+
+\hypertarget{ux6837ux4f8bux8f93ux5165-1-2}{%
+\subparagraph{样例输入 \#1}\label{ux6837ux4f8bux8f93ux5165-1-2}}
+
+\begin{verbatim}
+2
+3 4
+m3 h1
+m1 m2
+h1 h3
+h3 m2
+2 4
+h1 m2
+m2 m1
+h1 h2
+m1 h2
+\end{verbatim}
+
+\hypertarget{ux6837ux4f8bux8f93ux51fa-1-2}{%
+\subparagraph{样例输出 \#1}\label{ux6837ux4f8bux8f93ux51fa-1-2}}
+
+\begin{verbatim}
+GOOD
+BAD
+\end{verbatim}
+
+\hypertarget{ux9898ux89e3-2}{%
+\paragraph{题解}\label{ux9898ux89e3-2}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include<bits/stdc++.h>
+#define ll long long
+#define endl '\n'
+#define rep(i,a,b) for(ll i=a;i<=b;++i)
+using namespace std;
+#define int long long
+// const ll maxn=10+1e5;
+const long long mod = 998244353;
+
+const int N = 2010;
+const int M = 2010;
+vector<int>e[N];
+int col[N],dfn[N],low[N],cnt;
+int stk[N],top,_cnt;
+vector<int>ans[N];
+
+int n,m;
+void Tarjan(int u){
+    dfn[u]=low[u]=++cnt;
+    stk[++top]=u;
+    for(auto v:e[u]){
+        if(!dfn[v]) Tarjan(v),low[u]=min(low[u],low[v]);
+        else if(!col[v]) low[u]=min(low[u],dfn[v]);
+    }
+    if(low[u]==dfn[u]){
+        col[u]=++_cnt;
+        ans[_cnt].push_back(u);
+        while(stk[top]!=u)  
+            ans[_cnt].push_back(stk[top]),col[stk[top--]]=_cnt;
+        --top;
+    }
+}
+
+void solve()
+{   cin>>n>>m;
+    cnt=0;_cnt=0;top=0;
+    for(int i=0;i<2*n;i++){
+        e[i].clear();
+        dfn[i]=0;
+        low[i]=0;
+        col[i]=0;
+        ans[i].clear();
+    }
+    for(int i=1;i<=m;i++){
+        char x,y;int u,v;
+        cin>>x;
+        cin>>u;
+        cin>>y;
+        cin>>v;
+        u--;v--;//0 - n-1
+        //cout<<u<<"  "<<v<<endl;
+        u = 2*u+(x=='m');
+        v = 2*v+(y=='m');
+
+        e[u^1].push_back(v);
+        e[v^1].push_back(u);
+    }
+
+    for(int i=0;i<2*n;i++){
+        if(!dfn[i]){
+            Tarjan(i);
+        }
+    }
+    for(int i=0;i<2*n;i+=2){
+        if(col[i]==col[i^1]){
+            cout<<"BAD"<<endl;
+            return;
+        }
+    }
+    cout<<"GOOD"<<endl;
+    return;
+}
+
+signed main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+
+    ll T=1; 
+    cin>>T;
+    while(T--){
+        solve();
+    }
+}
+\end{minted}
+
+\hypertarget{ux8ba1ux7b97ux51e0ux4f55}{%
+\section{6-计算几何}\label{ux8ba1ux7b97ux51e0ux4f55}}
+
+\hypertarget{ux89e3ux9501}{%
+\subsection{解锁}\label{ux89e3ux9501}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include <bits/extc++.h>
+using namespace __gnu_pbds;
+\end{minted}
+
+如果爆了：
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp> // tree
+#include<ext/pb_ds/hash_policy.hpp> // hash
+#include<ext/pb_ds/trie_policy.hpp> // trie
+#include<ext/pb_ds/priority_queue.hpp> // priority_queue
+using namespace __gnu_pbds;
+\end{minted}
+
+使用 \texttt{priority\_queue} 小心与 \texttt{std} 产生冲突。
+
+\hypertarget{hash_table}{%
+\subsection{\texorpdfstring{\texttt{hash\_table}}{hash\_table}}\label{hash_table}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+cc_hash_table<int,bool> h; //拉链法
+gp_hash_table<int,bool> h; //探测法
+\end{minted}
+
+探测法可能快一些。使用同 \texttt{map}。复杂度 \(O(n)\)。
+
+远快于 \texttt{unordered\_map}
+
+\hypertarget{priority_queue}{%
+\subsection{\texorpdfstring{\texttt{priority\_queue}}{priority\_queue}}\label{priority_queue}}
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+template < typename Value_Type ,
+typename Cmp_Fn = std :: less < Value_Type >,
+typename Tag = pairing_heap_tag ,
+typename Allocator = std :: allocator <char > >
+class priority_queue
+\end{minted}
+
+\hypertarget{tag}{%
+\subsubsection{Tag}\label{tag}}
+
+\begin{itemize}
+\tightlist
+\item
+  pairing\_heap\_tag 配对堆
+\item
+  binomial\_heap\_tag 二项堆
+\item
+  rc\_binomial\_heap\_tag 冗余计数二项堆
+\item
+  binary\_heap\_tag 二叉堆
+\item
+  thin\_heap\_tag 类似斐波那契堆
+\end{itemize}
+
+\textbf{支持堆的合并}
+
+\hypertarget{ux7f51ux7edcux6d41}{%
+\subsection{\# 8-网络流}\label{ux7f51ux7edcux6d41}}
+
+\hypertarget{ux6700ux5927ux6d41}{%
+\subsection{最大流}\label{ux6700ux5927ux6d41}}
+
+\hypertarget{dinic}{%
+\subsubsection{dinic}\label{dinic}}
+
+初始化 g.init(s,t,num)
+
+先通过bfs对残余网络进行分层
+
+根据\textbf{层次}反复 dfs遍历\textbf{残量网络}，一次
+dfs找到一条\textbf{增广路}并更新，直至跑完能以当前层次到达 TT
+的所有路径。
+
+一般可解决1e5以内问题
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+const int V = 1010;
+const int E = 101000;
+template<typename T>
+struct FlowGraph{
+    int s,t,vtot;
+    int head[V],etot;
+    int dis[V],cur[V];
+    struct edge{
+        int v,nxt;
+        T f;
+    }e[E*2];
+    void addedge(int u,int v,T f){
+        e[etot] = {v,head[u],f};head[u] = etot++;
+        e[etot] = {u,head[v],0};head[v] = etot++;
+    }
+    bool bfs(){
+        for(int i=1;i<=vtot;i++){
+            dis[i]=0;
+            cur[i] = head[i];
+        }
+        queue<int>q;
+        q.push(s);dis[s]=1;
+        while(!q.empty()){
+            int u = q.front();q.pop();
+            for(int i=head[u];~i;i = e[i].nxt){
+                if(e[i].f&&!dis[e[i].v]){
+                    int v = e[i].v;
+                    dis[v] = dis[u]+1;
+                    if(v==t) return true;
+                    q.push(v);
+                }
+            }
+        }
+        return false;
+    }
+    T dfs(int u,T m){
+        if(u==t) return m;
+        ll flow = 0;
+        for(int i=cur[u];~i;cur[u]=i=e[i].nxt)//当前弧优化
+            if(e[i].f&&dis[e[i].v]==dis[u]+1){
+                T f = dfs(e[i].v,min(m,e[i].f));
+                e[i].f-=f;
+                e[i^1].f+=f;
+                m-=f;
+                flow+=f;
+                if(!m) break;
+            }
+        if(!flow) dis[u] = -1;
+        return flow;
+    }
+    T dinic(){
+        T flow = 0;
+        while(bfs()) flow+=dfs(s,numeric_limits<T>::max());
+        return flow;
+    }
+    void init(int s_,int t_,int vtot_){
+        s = s_;
+        t = t_;
+        vtot = vtot_;
+        etot = 0;
+        for(int i=1;i<=vtot;i++){
+            head[i]=-1;
+        }
+    }
+};
+FlowGraph<ll>g;
+int n,m,s,t;//s  源点  t  汇点
+void solve()
+{   cin>>n>>m>>s>>t;
+    g.init(s,t,n);
+    for(int i=1;i<=m;i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        g.addedge(u,v,w);
+    }
+    cout<<g.dinic()<<endl;
+}
+\end{minted}
+
+\hypertarget{ux5efaux6a21ux601dux60f3}{%
+\subsubsection{建模思想}\label{ux5efaux6a21ux601dux60f3}}
+
+\hypertarget{ux62c6ux70b9}{%
+\paragraph{拆点}\label{ux62c6ux70b9}}
+
+若某些点只允许通过一定次数x
+
+则可将这些点拆成两个点,建一条边从一个点连向另一个点，流量为次数x
+
+\hypertarget{ux8d85ux7ea7ux6e90ux70b9ux6c47ux70b9}{%
+\paragraph{超级源点汇点}\label{ux8d85ux7ea7ux6e90ux70b9ux6c47ux70b9}}
+
+建一个抽象的s,t
+
+\hypertarget{ux6700ux5c0fux6d41}{%
+\paragraph{最小流}\label{ux6700ux5c0fux6d41}}
+
+将都是正的边权改成负的，于是求出了最小流
+
+\hypertarget{ux6700ux5c0fux5272}{%
+\subsection{最小割}\label{ux6700ux5c0fux5272}}
+
+最小割的容量等于最大流
+
+割完后分为S、T两个点集合
+
+S集合中的点i满足残量网络中源点s能到i，即dis{[}i{]}!=0
+
+\hypertarget{ux8d39ux7528ux6d41}{%
+\subsection{费用流}\label{ux8d39ux7528ux6d41}}
+
+最小费用最大流一般比最大流多个属性（？
+
+比如：
+
+有 n件工作要分配给 n个人做。第 i个人做第 j件工作产生的效益为 cij
+。试设计一个将 n 件工作分配给
+n个人做的分配方案，使产生的总效益最小或最大。
+
+一条s到t的流即表示经过的工作给经过的人做，产生的费用即为效益
+
+则能求出最小的总效益
+
+求最大效益时只需将费用改为负的效益，则得解(要求初始图中无负环，否则spfa会寄)
+
+板子：
+
+将代价视为边的距离，先通过spfa求出s到t的最短路，再在该路进行增广
+
+\begin{minted}[fontsize=\footnotesize,breaklines,linenos]{cpp}
+const int V = 20100;
+const int E = 201000;
+template<typename T>
+struct MinCostGraph{
+    int s,t,vtot;
+    int head[V],etot;
+    T dis[V],flow,cost;
+    int pre[V];
+    bool vis[V];
+
+    struct edge{
+        int v,nxt;
+        T f,c;
+    }e[E*2];
+    void addedge(int u,int v,T f,T c,T f2=0){
+        e[etot] = {v,head[u],f,c};head[u] = etot++;
+        e[etot] = {u,head[v],f2,-c};head[v] = etot++;
+    }
+    bool spfa(){
+        T inf = numeric_limits<T>::max()/2;
+        for(int i=1;i<=vtot;i++){
+            dis[i]=inf;
+            vis[i] = false;
+            pre[i] = -1;
+        }
+        dis[s] = 0;
+        vis[s] = true;
+        queue<int>q;
+        q.push(s);
+        while(!q.empty()){
+            int u = q.front();
+            for(int i=head[u];~i;i = e[i].nxt){
+                int v = e[i].v;
+                if(e[i].f&&dis[v]>dis[u]+e[i].c){
+                    dis[v] = dis[u]+e[i].c;
+                    pre[v] = i;
+                    if(!vis[v]){
+                        vis[v]=1;
+                        q.push(v);
+                    }
+                }
+            }
+            q.pop();
+            vis[u] = false;
+        }
+        return dis[t]!=inf;
+    }
+    void augment(){
+        int u = t;
+        T f = numeric_limits<T>::max();
+        while(~pre[u]){
+            f = min(f,e[pre[u]].f);
+            u = e[pre[u]^1].v;
+        }
+        flow+=f;
+        cost+=f*dis[t];
+        u = t;
+        while(~pre[u]){
+            e[pre[u]].f-=f;
+            e[pre[u]^1].f+=f;
+            u = e[pre[u]^1].v;
+        }
+    }
+    pair<T,T> solve(){
+        flow=0;cost=0;
+        while(spfa()) augment();
+        return {flow,cost};
+    }
+    void init(int s_,int t_,int vtot_){
+        s = s_;
+        t = t_;
+        vtot = vtot_;
+        etot = 0;
+        for(int i=1;i<=vtot;i++){
+            head[i]=-1;
+        }
+    }
+};
+MinCostGraph<ll>g;
+int n,m,s,t;
+void solve()
+{   cin>>n>>m>>s>>t;
+    g.init(s,t,n);
+    for(int i=1;i<=m;i++){
+        int u,v,w,c;
+        cin>>u>>v>>w>>c;
+        g.addedge(u,v,w,c);
+    }
+    pair<ll,ll> ans = g.solve();
+    cout<<ans.first<<" "<<ans.second<<endl;
+}
+\end{minted}
+
+\end{document}

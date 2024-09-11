@@ -1,4 +1,5 @@
 pandoc \
+    --from markdown-yaml_metadata_block \
     --template ./pandoc/algo.latex \
     --filter ./pandoc/minted.py \
     --pdf-engine=xelatex \
