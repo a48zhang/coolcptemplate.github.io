@@ -1,4 +1,5 @@
 \PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\DeclareUnicodeCharacter{2009}{\,} 
 \PassOptionsToPackage{hyphens}{url}
 $if(colorlinks)$
 \PassOptionsToPackage{dvipsnames,svgnames*,x11names*}{xcolor}
