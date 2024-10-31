@@ -53,14 +53,6 @@ class priority_queue
 
 ### Tree
 
-|                | pop                             | push                            | modify                        | join        | erase                         |
-| -------------- | ------------------------------- | ------------------------------- | ----------------------------- | ----------- | ----------------------------- |
-| 配对堆         | θ(1)                            | 最坏 θ(size) 均摊 θ(log size)   | 最坏 θ(size) 均摊 θ(log size) | θ(1)        | 最坏 θ(size) 均摊 θ(log size) |
-| 二项堆         | 最坏 θ(log size) 均摊 θ(1)      | O(log size)                     | O(log size)                   | O(log size) | O(log size)                   |
-| 冗余计数二项堆 | θ(1)                            | O(log size)                     | O(log size)                   | O(log size) | O(log size)                   |
-| 二叉堆         | 最坏 θ(size) 均摊 θ(log size)？ | 最坏 θ(size) 均摊 θ(log size)？ | θ(size)                       | θ(size)     | O(size)                       |
-| thin_heap_tag  | θ(1)                            | 最坏 θ(size) 均摊 θ(log size)   | 最坏 θ(size) 均摊 θ(log size) | θ(size)     | 最坏 θ(size) 均摊 θ(log size) |
-
 ```cpp
 __gnu_pbds::tree<T,__gnu_pbds::null_type,less<T>,__gnu_pbds::rb_tree_tag,__gnu_pbds::tree_order_statistics_node_update>st;
 ```
